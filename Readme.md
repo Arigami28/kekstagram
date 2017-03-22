@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Роман Андреев](https://up.htmlacademy.ru/javascript/9/user/323827).
-* Наставник: `Неизвестно`.
+* Наставник: [Анна Новикова](https://htmlacademy.ru/profile/id83457).
 
 ---
 
