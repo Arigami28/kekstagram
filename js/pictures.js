@@ -20,7 +20,7 @@ var commentsArray = ['Всё отлично!', 'Я поскользнулся н
 
 // генерация случайного комментария
 var getRandomComments = function () {
-  
+
   return commentsArray[Math.floor(Math.random() * commentsArray.length)];
 };
 
