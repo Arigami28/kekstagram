@@ -29,26 +29,26 @@ var amountOfPhoto = 25;
 // массив с фото, количеством лайков и комментарием
 var photo = getPhotoItems(amountOfPhoto);
 
-// минимальное количество лайков
-var min = 15;
-
-// максимальное количество лайков
-var max = 200;
-
 // индекс фото , для вставки фото в превью галереи
-var galleryIndexPhoto = 1;
+var galleryIndexPhoto = 0;
 
 // счетчик лайков превью галереи
-var galleryOverlayLikesCount = galleryOverlay.querySelector('.likes-count');
+var galleryLikes = galleryOverlay.querySelector('.likes-count');
 
 // комментарии превью галереи
-var galleryOverlayCommentsCount = galleryOverlay.querySelector('.comments-count');
+var galleryComments = galleryOverlay.querySelector('.comments-count');
 
 // адрес фото превью галереи
-var galleryOverlayImgUrl = galleryOverlay.querySelector('.gallery-overlay-image');
+var galleryImgUrl = galleryOverlay.querySelector('.gallery-overlay-image');
+
+// минимальное количество лайков
+var minLikes = 15;
+
+// максимальное количество лайков
+var maxLikes = 200;
 
 // получение случного числа лайков
-function getRandomNumberLikes(minLikes, maxLikes) {
+function getRandomNumberLikes(min, max) {
   return (Math.random() * (max - min) + min).toFixed(0);
 }
 
@@ -59,7 +59,7 @@ function getPhotoItems(item) {
   for (var i = 0; i < item; i++) {
     photoItems[i] = {
       url: 'photos/' + (i + 1) + '.jpg',
-      likes: getRandomNumberLikes(min, max),
+      likes: getRandomNumberLikes(minLikes, maxLikes),
       comments: getRandomComments()
     };
   }
@@ -89,10 +89,10 @@ function showPictures(array, container) {
 }
 
 // генерация содержимого превью галлереи
-function showGalleryPreview(item, indexItem) {
-  galleryOverlayImgUrl.src = item[indexItem].url;
-  galleryOverlayCommentsCount.textContent = item[indexItem].comments;
-  galleryOverlayLikesCount.textContent = item[indexItem].likes;
+function showGalleryPreview(item, index) {
+  galleryImgUrl.src = item[index].url;
+  galleryComments.textContent = item[index].comments;
+  galleryLikes.textContent = item[index].likes;
   galleryOverlay.classList.remove('invisible');
 }
 
