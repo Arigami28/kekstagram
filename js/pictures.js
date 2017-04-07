@@ -35,6 +35,18 @@ var min = 15;
 // максимальное количество лайков
 var max = 200;
 
+// индекс фото , для вставки фото в превью галереи
+var galleryIndexPhoto = 1;
+
+// счетчик лайков превью галереи
+var galleryOverlayLikesCount = galleryOverlay.querySelector('.likes-count');
+
+// комментарии превью галереи
+var galleryOverlayCommentsCount = galleryOverlay.querySelector('.comments-count');
+
+// адрес фото превью галереи
+var galleryOverlayImgUrl = galleryOverlay.querySelector('.gallery-overlay-image');
+
 // получение случного числа лайков
 function getRandomNumberLikes(minLikes, maxLikes) {
   return (Math.random() * (max - min) + min).toFixed(0);
@@ -67,23 +79,22 @@ function renderPictures(picturesObj) {
 }
 
 // наполнение и отрисовка шаблона из массива
-function showPictures(array) {
-
+function showPictures(array, container) {
   array.forEach(function (item) {
     fragment.appendChild(renderPictures(item));
   });
 
-  pictures.appendChild(fragment);
+  container.appendChild(fragment);
   uploadOverlay.classList.add('invisible');
 }
 
 // генерация содержимого превью галлереи
-function showGalleryPreview(item) {
-  galleryOverlay.querySelector('.gallery-overlay-image').src = item[1].url;
-  galleryOverlay.querySelector('.comments-count').textContent = item[1].comments;
-  galleryOverlay.querySelector('.likes-count').textContent = item[1].likes;
+function showGalleryPreview(item, indexItem) {
+  galleryOverlayImgUrl.src = item[indexItem].url;
+  galleryOverlayCommentsCount.textContent = item[indexItem].comments;
+  galleryOverlayLikesCount.textContent = item[indexItem].likes;
   galleryOverlay.classList.remove('invisible');
 }
 
-showPictures(photo);
-showGalleryPreview(photo);
+showPictures(photo, pictures);
+showGalleryPreview(photo, galleryIndexPhoto);
