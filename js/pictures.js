@@ -48,7 +48,7 @@ function getRandomComments() {
 }
 
 // получение случного числа лайков
-function getRandomNumberLikes(min, max) {
+function getRandomNumber(min, max) {
   return (Math.random() * (max - min) + min).toFixed(0);
 }
 
@@ -59,7 +59,7 @@ function getPhotoItems(item) {
   for (var i = 0; i < item; i++) {
     photoItems[i] = {
       url: 'photos/' + (i + 1) + '.jpg',
-      likes: getRandomNumberLikes(minLikes, maxLikes),
+      likes: getRandomNumber(minLikes, maxLikes),
       comments: getRandomComments()
     };
   }
