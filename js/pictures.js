@@ -19,9 +19,9 @@ var fragment = document.createDocumentFragment();
 var commentsArray = ['Всё отлично!', 'В целом всё неплохо. Но не всё.'];
 
 // генерация случайного комментария
-var getRandomComments = function () {
+function getRandomComments() {
   return commentsArray[Math.floor(Math.random() * commentsArray.length)];
-};
+}
 
 // количество фото
 var amountOfPhoto = 25;
