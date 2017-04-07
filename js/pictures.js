@@ -18,11 +18,6 @@ var fragment = document.createDocumentFragment();
 // массив комментариев
 var commentsArray = ['Всё отлично!', 'В целом всё неплохо. Но не всё.'];
 
-// генерация случайного комментария
-function getRandomComments() {
-  return commentsArray[Math.floor(Math.random() * commentsArray.length)];
-}
-
 // количество фото
 var amountOfPhoto = 25;
 
@@ -45,7 +40,12 @@ var minLikes = 15;
 var maxLikes = 200;
 
 // массив с фото, количеством лайков и комментарием
-var photo = getPhotoItems(amountOfPhoto, minLikes, maxLikes);
+var photo = getPhotoItems(amountOfPhoto);
+
+// генерация случайного комментария
+function getRandomComments() {
+  return commentsArray[Math.floor(Math.random() * commentsArray.length)];
+}
 
 // получение случного числа лайков
 function getRandomNumberLikes(min, max) {
@@ -53,13 +53,13 @@ function getRandomNumberLikes(min, max) {
 }
 
 // генерации объектов для элементов массива с фото, количеством лайков и комментарием
-function getPhotoItems(item, min, max) {
+function getPhotoItems(item) {
   var photoItems = [];
 
   for (var i = 0; i < item; i++) {
     photoItems[i] = {
       url: 'photos/' + (i + 1) + '.jpg',
-      likes: getRandomNumberLikes(min, max),
+      likes: getRandomNumberLikes(minLikes, maxLikes),
       comments: getRandomComments()
     };
   }
