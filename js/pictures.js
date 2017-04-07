@@ -26,9 +26,6 @@ var getRandomComments = function () {
 // количество фото
 var amountOfPhoto = 25;
 
-// массив с фото, количеством лайков и комментарием
-var photo = getPhotoItems(amountOfPhoto);
-
 // индекс фото , для вставки фото в превью галереи
 var galleryIndexPhoto = 0;
 
@@ -47,19 +44,22 @@ var minLikes = 15;
 // максимальное количество лайков
 var maxLikes = 200;
 
+// массив с фото, количеством лайков и комментарием
+var photo = getPhotoItems(amountOfPhoto, minLikes, maxLikes);
+
 // получение случного числа лайков
 function getRandomNumberLikes(min, max) {
   return (Math.random() * (max - min) + min).toFixed(0);
 }
 
 // генерации объектов для элементов массива с фото, количеством лайков и комментарием
-function getPhotoItems(item) {
+function getPhotoItems(item, min, max) {
   var photoItems = [];
 
   for (var i = 0; i < item; i++) {
     photoItems[i] = {
       url: 'photos/' + (i + 1) + '.jpg',
-      likes: getRandomNumberLikes(minLikes, maxLikes),
+      likes: getRandomNumberLikes(min, max),
       comments: getRandomComments()
     };
   }
