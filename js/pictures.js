@@ -3,35 +3,40 @@
 // блок шаблона
 var photoItemsTemplate = document.querySelector('#picture-template').content;
 
-// блок upload-overlay
+// блок кадрирования изображения
 var uploadOverlay = document.querySelector('.upload-overlay');
 
-// блок pictures
+// блок для отрисовки всех изображений
 var pictures = document.querySelector('.pictures');
 
-// блок галлерея
+// блок для отрисовки превью галереи
 var galleryOverlay = document.querySelector('.gallery-overlay');
 
 // пустой фрагмент для наполнения
 var fragment = document.createDocumentFragment();
 
 // массив комментариев
-var commentsArray = ['Всё отлично!', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.'];
+var commentsArray = ['Всё отлично!', 'В целом всё неплохо. Но не всё.'];
 
 // генерация случайного комментария
 var getRandomComments = function () {
-
   return commentsArray[Math.floor(Math.random() * commentsArray.length)];
 };
 
 // количество фото
 var amountOfPhoto = 25;
 
-// получение случного числа лайков
-function getRandomNumberLikes() {
-  var min = 15;
-  var max = 200;
+// массив с фото, количеством лайков и комментарием
+var photo = getPhotoItems(amountOfPhoto);
 
+// минимальное количество лайков
+var min = 15;
+
+// максимальное количество лайков
+var max = 200;
+
+// получение случного числа лайков
+function getRandomNumberLikes(minLikes, maxLikes) {
   return (Math.random() * (max - min) + min).toFixed(0);
 }
 
@@ -39,10 +44,10 @@ function getRandomNumberLikes() {
 function getPhotoItems(item) {
   var photoItems = [];
 
-  for (var i = 1; i <= item; i++) {
+  for (var i = 0; i < item; i++) {
     photoItems[i] = {
-      url: 'photos/' + i + '.jpg',
-      likes: getRandomNumberLikes(),
+      url: 'photos/' + (i + 1) + '.jpg',
+      likes: getRandomNumberLikes(min, max),
       comments: getRandomComments()
     };
   }
@@ -50,20 +55,22 @@ function getPhotoItems(item) {
   return photoItems;
 }
 
-// массив с фото, количеством лайков и комментарием
-var photo = getPhotoItems(amountOfPhoto);
+// создаем элемент разметки с фото
+function renderPictures(picturesObj) {
+  var photosElement = photoItemsTemplate.cloneNode(true);
+
+  photosElement.querySelector('img').src = picturesObj.url;
+  photosElement.querySelector('.picture-comments').textContent = picturesObj.comments;
+  photosElement.querySelector('.picture-likes').textContent = picturesObj.likes;
+
+  return photosElement;
+}
 
 // наполнение и отрисовка шаблона из массива
 function showPictures(array) {
 
   array.forEach(function (item) {
-    var photosElement = photoItemsTemplate.cloneNode(true);
-
-    photosElement.querySelector('img').src = item.url;
-    photosElement.querySelector('.picture-comments').textContent = item.comments;
-    photosElement.querySelector('.picture-likes').textContent = item.likes;
-
-    fragment.appendChild(photosElement);
+    fragment.appendChild(renderPictures(item));
   });
 
   pictures.appendChild(fragment);
