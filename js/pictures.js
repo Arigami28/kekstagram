@@ -22,7 +22,7 @@ var commentsArray = ['Всё отлично!', 'В целом всё непло�
 var amountOfPhoto = 25;
 
 // индекс фото , для вставки фото в превью галереи
-var galleryIndexPhoto = 0;
+var galleryIndexPhotoShift = 1;
 
 // счетчик лайков превью галереи
 var galleryLikes = galleryOverlay.querySelector('.likes-count');
@@ -41,6 +41,78 @@ var maxLikes = 200;
 
 // массив с фото, количеством лайков и комментарием
 var photo = getPhotoItems(amountOfPhoto);
+
+// блок формы закрузки фотографий
+var uploadForm = document.querySelector('.upload-form');
+
+// кнопка Закрыть на форме upload
+var uploadFormCanselBtn = document.querySelector('.upload-form-cancel');
+
+// кнопка Отправить на форме upload
+var uploadFormSubmitBtn = document.querySelector('.upload-form-submit');
+
+// закрытие формы кадрирование по enter
+var onEnterCloseUpload = function (evt) {
+  if (evt.keyCode === 13) {
+    uploadOverlay.classList.add('invisible');
+  }
+};
+
+// закрытие формы кадрирование по клику
+var onClickCloseUpload = function (evt) {
+  evt.preventDefault();
+  uploadOverlay.classList.add('invisible');
+};
+
+// закрытие формы кадрирование по esc
+var onEscCloseUpload = function (evt) {
+  if (evt.keyCode === 27) {
+    uploadOverlay.classList.add('invisible');
+  }
+};
+
+// кнопка закрития превью галереи
+var closeGalleryPreview = galleryOverlay.querySelector('.gallery-overlay-close');
+
+// сопостовление фото и превью ,а так же  их вывод в превию
+var openPreviewPhoto = function (evt) {
+  var target = evt.target;
+  while (target !== target.target) {
+    if (target.tagName === 'A') {
+      var imgIndex = (target.children[0].attributes.src.value).replace(/\D/ig, '') - galleryIndexPhotoShift;
+      showGalleryPreview(photo, imgIndex);
+      return;
+    }
+    target = target.parentNode;
+  }
+};
+
+// закрытие превью по нажатию на esc
+var onEscClosePreview = function (evt) {
+  if (evt.keyCode === 27) {
+    galleryOverlay.classList.add('invisible');
+  }
+};
+
+// открытие превью по нажатию enter через фокус
+var onEnterOpenPreview = function (evt) {
+  if (evt.keyCode === 13) {
+    openPreviewPhoto(evt);
+  }
+};
+
+//  закрытие превью по нажатию enter через фокус
+var onEnterClosePreview = function (evt) {
+  if (evt.keyCode === 13) {
+    galleryOverlay.classList.add('invisible');
+  }
+};
+
+// закрытие превью по клику
+var onClickClosePreview = function (evt) {
+  galleryOverlay.classList.add('invisible');
+};
+
 
 // генерация случайного комментария
 function getRandomComments() {
@@ -97,4 +169,65 @@ function showGalleryPreview(item, index) {
 }
 
 showPictures(photo, pictures);
-showGalleryPreview(photo, galleryIndexPhoto);
+
+// генерация открытия превью фото при клике на него (генерируется окно с тем же фото на которое и было нажатие)
+pictures.addEventListener('click', function (evt) {
+  evt.preventDefault();
+  openPreviewPhoto(evt);
+
+  // закрытие превью по esc
+  pictures.addEventListener('keydown', function (event) {
+    onEscClosePreview(event);
+  });
+
+});
+
+// открытие превью по нажатии Enter
+pictures.addEventListener('keydown', function (evt) {
+  onEnterOpenPreview(evt);
+});
+
+// закрытие превью по esc
+pictures.addEventListener('keydown', function (evt) {
+  onEscClosePreview(evt);
+});
+
+// закрытие превью по клику на крестик
+closeGalleryPreview.addEventListener('click', function (evt) {
+  onClickClosePreview(evt);
+});
+
+// закрытие превью по нажатии Enter на крестик
+closeGalleryPreview.addEventListener('keydown', function (evt) {
+  onEnterClosePreview(evt);
+});
+
+// вывод формы кадрирования после выбора файла в input
+uploadForm.addEventListener('change', function (evt) {
+  uploadOverlay.classList.remove('invisible');
+
+  // закрытие формы кадрирование по ESC
+  document.addEventListener('keydown', function (event) {
+    onEscCloseUpload(event);
+  });
+});
+
+// закрытие формы по клику на крестик
+uploadFormCanselBtn.addEventListener('click', function (evt) {
+  onClickCloseUpload(evt);
+});
+
+// закрытие формы по нажатию на крестик через Enter
+uploadFormCanselBtn.addEventListener('keydown', function (evt) {
+  onEnterCloseUpload(evt);
+});
+
+// закрытие формы по клику на кнопке Отправить
+uploadFormSubmitBtn.addEventListener('click', function (evt) {
+  onClickCloseUpload(evt);
+});
+
+// закрытие формы по нажатию на Отправить через Enter
+uploadFormSubmitBtn.addEventListener('keydown', function (evt) {
+  onEnterCloseUpload(evt);
+});
