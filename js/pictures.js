@@ -113,6 +113,8 @@ var onClickClosePreview = function (evt) {
   galleryOverlay.classList.add('invisible');
 };
 
+// поле комментариев формы upload
+var uploadDescription = document.querySelector('.upload-form-description');
 
 // генерация случайного комментария
 function getRandomComments() {
@@ -176,58 +178,43 @@ pictures.addEventListener('click', function (evt) {
   openPreviewPhoto(evt);
 
   // закрытие превью по esc
-  pictures.addEventListener('keydown', function (event) {
-    onEscClosePreview(event);
-  });
+  pictures.addEventListener('keydown', onEscClosePreview);
 
 });
 
 // открытие превью по нажатии Enter
-pictures.addEventListener('keydown', function (evt) {
-  onEnterOpenPreview(evt);
-});
+pictures.addEventListener('keydown', onEnterOpenPreview);
 
 // закрытие превью по esc
-pictures.addEventListener('keydown', function (evt) {
-  onEscClosePreview(evt);
-});
+pictures.addEventListener('keydown', onEscClosePreview);
 
 // закрытие превью по клику на крестик
-closeGalleryPreview.addEventListener('click', function (evt) {
-  onClickClosePreview(evt);
-});
+closeGalleryPreview.addEventListener('click', onClickClosePreview);
 
 // закрытие превью по нажатии Enter на крестик
-closeGalleryPreview.addEventListener('keydown', function (evt) {
-  onEnterClosePreview(evt);
-});
+closeGalleryPreview.addEventListener('keydown', onEnterClosePreview);
 
 // вывод формы кадрирования после выбора файла в input
 uploadForm.addEventListener('change', function (evt) {
   uploadOverlay.classList.remove('invisible');
 
   // закрытие формы кадрирование по ESC
-  document.addEventListener('keydown', function (event) {
-    onEscCloseUpload(event);
-  });
+  document.addEventListener('keydown', onEscCloseUpload);
 });
 
 // закрытие формы по клику на крестик
-uploadFormCanselBtn.addEventListener('click', function (evt) {
-  onClickCloseUpload(evt);
-});
+uploadFormCanselBtn.addEventListener('click', onClickCloseUpload);
 
 // закрытие формы по нажатию на крестик через Enter
-uploadFormCanselBtn.addEventListener('keydown', function (evt) {
-  onEnterCloseUpload(evt);
-});
+uploadFormCanselBtn.addEventListener('keydown', onEnterCloseUpload);
 
 // закрытие формы по клику на кнопке Отправить
-uploadFormSubmitBtn.addEventListener('click', function (evt) {
-  onClickCloseUpload(evt);
-});
+uploadFormSubmitBtn.addEventListener('click', onClickCloseUpload);
 
 // закрытие формы по нажатию на Отправить через Enter
-uploadFormSubmitBtn.addEventListener('keydown', function (evt) {
-  onEnterCloseUpload(evt);
+uploadFormSubmitBtn.addEventListener('keydown', onEnterCloseUpload);
+
+
+uploadDescription.addEventListener('focus', function (evt) {
+  document.removeEventListener('keydown', onEscCloseUpload);
 });
