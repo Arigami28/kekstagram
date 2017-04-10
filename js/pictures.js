@@ -42,79 +42,8 @@ var maxLikes = 200;
 // массив с фото, количеством лайков и комментарием
 var photo = getPhotoItems(amountOfPhoto);
 
-// блок формы закрузки фотографий
-var uploadForm = document.querySelector('.upload-form');
-
-// кнопка Закрыть на форме upload
-var uploadFormCanselBtn = document.querySelector('.upload-form-cancel');
-
-// кнопка Отправить на форме upload
-var uploadFormSubmitBtn = document.querySelector('.upload-form-submit');
-
-// закрытие формы кадрирование по enter
-var onEnterCloseUpload = function (evt) {
-  if (evt.keyCode === 13) {
-    uploadOverlay.classList.add('invisible');
-  }
-};
-
-// закрытие формы кадрирование по клику
-var onClickCloseUpload = function (evt) {
-  evt.preventDefault();
-  uploadOverlay.classList.add('invisible');
-};
-
-// закрытие формы кадрирование по esc
-var onEscCloseUpload = function (evt) {
-  if (evt.keyCode === 27) {
-    uploadOverlay.classList.add('invisible');
-  }
-};
-
 // кнопка закрития превью галереи
 var closeGalleryPreview = galleryOverlay.querySelector('.gallery-overlay-close');
-
-// сопостовление фото и превью ,а так же  их вывод в превию
-var openPreviewPhoto = function (evt) {
-  var target = evt.target;
-  while (target !== target.target) {
-    if (target.tagName === 'A') {
-      var imgIndex = (target.children[0].attributes.src.value).replace(/\D/ig, '') - galleryIndexPhotoShift;
-      showGalleryPreview(photo, imgIndex);
-      return;
-    }
-    target = target.parentNode;
-  }
-};
-
-// закрытие превью по нажатию на esc
-var onEscClosePreview = function (evt) {
-  if (evt.keyCode === 27) {
-    galleryOverlay.classList.add('invisible');
-  }
-};
-
-// открытие превью по нажатию enter через фокус
-var onEnterOpenPreview = function (evt) {
-  if (evt.keyCode === 13) {
-    openPreviewPhoto(evt);
-  }
-};
-
-//  закрытие превью по нажатию enter через фокус
-var onEnterClosePreview = function (evt) {
-  if (evt.keyCode === 13) {
-    galleryOverlay.classList.add('invisible');
-  }
-};
-
-// закрытие превью по клику
-var onClickClosePreview = function (evt) {
-  galleryOverlay.classList.add('invisible');
-};
-
-// поле комментариев формы upload
-var uploadDescription = document.querySelector('.upload-form-description');
 
 // генерация случайного комментария
 function getRandomComments() {
@@ -152,6 +81,8 @@ function renderPictures(picturesObj) {
   return photosElement;
 }
 
+/* _________________________________________*/
+
 // наполнение и отрисовка шаблона из массива
 function showPictures(array, container) {
   array.forEach(function (item) {
@@ -160,39 +91,129 @@ function showPictures(array, container) {
 
   container.appendChild(fragment);
   uploadOverlay.classList.add('invisible');
+
+  // активация листерна галереи  при клике на него (генерируется окно с тем же фото на которое и было нажатие)
+  pictures.addEventListener('click', onClickPictures);
+
+  // активация листерна галереи  по нажатии Enter
+  document.addEventListener('keydown', onPressEnterGallery);
 }
 
-// генерация содержимого превью галлереи
-function showGalleryPreview(item, index) {
+// генерация содержимого галереи
+function showGalleryPhoto(item, index) {
   galleryImgUrl.src = item[index].url;
   galleryComments.textContent = item[index].comments;
   galleryLikes.textContent = item[index].likes;
   galleryOverlay.classList.remove('invisible');
+
+  // активация листнера на кнопку крести в галелери
+  closeGalleryPreview.addEventListener('click', onClickCloseGallery);
+
+  // активация листнера на нажатие enter на кнопке крестик в галелери
+  document.addEventListener('keydown', onEnterCloseGallery);
+}
+
+// открытие галереи по нажатию enter
+function onPressEnterGallery(evt) {
+  if (evt.keyCode === 13) {
+    openGallery();
+  }
+}
+
+// открытие галереи по клику
+function onClickPictures(evt) {
+  evt.preventDefault();
+  openGalleryPhoto(evt);
+
+  // активация листнера на кнопку esc
+  document.addEventListener('keydown', onPressEscGallery);
+}
+
+// сопостовление фото и галереи ,а так же  их вывод в галерею
+function openGalleryPhoto(evt) {
+  var target = evt.target;
+  while (target !== target.target) {
+    if (target.tagName === 'A') {
+      var imgIndex = (target.children[0].attributes.src.value).replace(/\D/ig, '') - galleryIndexPhotoShift;
+      showGalleryPhoto(photo, imgIndex);
+      return;
+    }
+    target = target.parentNode;
+  }
+}
+
+// закрытие галереи по esc
+function onPressEscGallery(evt) {
+  if (evt.keyCode === 27) {
+    closeGallery();
+  }
+}
+
+//  закрытие галереи по нажатию enter через фокус
+function onEnterCloseGallery(evt) {
+  if (evt.keyCode === 13) {
+    closeGallery();
+  }
+}
+
+// закрытие галереи по клику
+function onClickCloseGallery(evt) {
+  closeGallery();
+}
+
+// открытие галереи
+function openGallery(evt) {
+  galleryOverlay.classList.remove('invisible');
+}
+
+// открытие закрытие
+function closeGallery(evt) {
+  galleryOverlay.classList.add('invisible');
+  document.removeEventListener('keydown', onPressEscGallery);
+
+  // деактивация листнера на кнопку крести в галелери
+  closeGalleryPreview.removeEventListener('click', onClickCloseGallery);
+
+  // деактивация листнера на нажатие enter на крестик в галелери
+  document.removeEventListener('keydown', onEnterCloseGallery);
 }
 
 showPictures(photo, pictures);
+/*
 
-// генерация открытия превью фото при клике на него (генерируется окно с тем же фото на которое и было нажатие)
-pictures.addEventListener('click', function (evt) {
+// блок формы закрузки фотографий
+var uploadForm = document.querySelector('.upload-form');
+
+// кнопка Закрыть на форме upload
+var uploadFormCanselBtn = document.querySelector('.upload-form-cancel');
+
+// кнопка Отправить на форме upload
+var uploadFormSubmitBtn = document.querySelector('.upload-form-submit');
+
+// поле комментариев формы upload
+var uploadDescription = document.querySelector('.upload-form-description');
+
+
+// закрытие формы кадрирование по enter
+function onEnterCloseUpload(evt) {
+  if (evt.keyCode === 13) {
+    uploadOverlay.classList.add('invisible');
+  }
+}
+
+// закрытие формы кадрирование по клику
+function onClickCloseUpload(evt) {
   evt.preventDefault();
-  openPreviewPhoto(evt);
+  uploadOverlay.classList.add('invisible');
+}
 
-  // закрытие превью по esc
-  pictures.addEventListener('keydown', onEscClosePreview);
+// закрытие формы кадрирование по esc
+function onEscCloseUpload(evt) {
+  if (evt.keyCode === 27) {
+    uploadOverlay.classList.add('invisible');
+  }
+}
 
-});
-
-// открытие превью по нажатии Enter
-pictures.addEventListener('keydown', onEnterOpenPreview);
-
-// закрытие превью по esc
-pictures.addEventListener('keydown', onEscClosePreview);
-
-// закрытие превью по клику на крестик
-closeGalleryPreview.addEventListener('click', onClickClosePreview);
-
-// закрытие превью по нажатии Enter на крестик
-closeGalleryPreview.addEventListener('keydown', onEnterClosePreview);
 
 // вывод формы кадрирования после выбора файла в input
 uploadForm.addEventListener('change', function (evt) {
@@ -218,3 +239,5 @@ uploadFormSubmitBtn.addEventListener('keydown', onEnterCloseUpload);
 uploadDescription.addEventListener('focus', function (evt) {
   document.removeEventListener('keydown', onEscCloseUpload);
 });
+
+*/
