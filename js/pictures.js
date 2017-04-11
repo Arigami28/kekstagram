@@ -43,7 +43,31 @@ var maxLikes = 200;
 var photo = getPhotoItems(amountOfPhoto);
 
 // кнопка закрития превью галереи
-var closeGalleryPreview = galleryOverlay.querySelector('.gallery-overlay-close');
+var galleryOverlayClose = galleryOverlay.querySelector('.gallery-overlay-close');
+
+// код клавиши esc
+var ESC_KEY_CODE = 27;
+
+// код клавиши enter
+var ENTER_KEY_CODE = 13;
+
+// открытие галереи по enter
+var onEnterGalleryOpen = onKeyPress(ENTER_KEY_CODE, openGallery);
+
+// закрытие галереи по enter
+var onEnterGalleryClose = onKeyPress(ENTER_KEY_CODE, closeGallery);
+
+// закрытие галереи по esc
+var onEscGalleryClose = onKeyPress(ESC_KEY_CODE, closeGallery);
+
+// Нажатие клавишь (открытие/закрытие)
+function onKeyPress(keyCode, callback) {
+  return function (evt) {
+    if (evt.keyCode === keyCode) {
+      callback();
+    }
+  };
+}
 
 // генерация случайного комментария
 function getRandomComments() {
@@ -81,8 +105,6 @@ function renderPictures(picturesObj) {
   return photosElement;
 }
 
-/* _________________________________________*/
-
 // наполнение и отрисовка шаблона из массива
 function showPictures(array, container) {
   array.forEach(function (item) {
@@ -92,72 +114,63 @@ function showPictures(array, container) {
   container.appendChild(fragment);
   uploadOverlay.classList.add('invisible');
 
-  // активация листерна галереи  при клике на него (генерируется окно с тем же фото на которое и было нажатие)
-  pictures.addEventListener('click', onClickPictures);
+  // создание листерна picture  при клике на него (генерируется окно с тем же фото на которое и было нажатие)
+  pictures.addEventListener('click', onPicturesClick);
 
-  // активация листерна галереи  по нажатии Enter
-  document.addEventListener('keydown', onPressEnterGallery);
+  // создание листерна picture  по нажатии Enter
+  document.addEventListener('keydown', onEnterGalleryOpen);
 }
 
-// генерация содержимого галереи
-function showGalleryPhoto(item, index) {
-  galleryImgUrl.src = item[index].url;
-  galleryComments.textContent = item[index].comments;
-  galleryLikes.textContent = item[index].likes;
+// генерация галереи
+function showGallery(picturesArray, pictureIndex) {
+  galleryImgUrl.src = picturesArray[pictureIndex].url;
+  galleryComments.textContent = picturesArray[pictureIndex].comments;
+  galleryLikes.textContent = picturesArray[pictureIndex].likes;
   galleryOverlay.classList.remove('invisible');
 
-  // активация листнера на кнопку крести в галелери
-  closeGalleryPreview.addEventListener('click', onClickCloseGallery);
+  // создание листнера на кнопку крести в галереи
+  galleryOverlayClose.addEventListener('click', onGalleryCloseClick);
 
-  // активация листнера на нажатие enter на кнопке крестик в галелери
-  document.addEventListener('keydown', onEnterCloseGallery);
+  // создание листнера на кнопку esc
+  document.addEventListener('keydown', onEscGalleryClose);
+
+  // создание листнера на нажатие enter на кнопке крестик в галелери
+  document.addEventListener('keydown', onEnterGalleryClose);
+
+  // удаление листерна picture  при клике на него
+  pictures.removeEventListener('click', onPicturesClick);
+
+  // удаление листерна picture  по нажатии Enter
+  document.removeEventListener('keydown', onEnterGalleryOpen);
 }
 
-// открытие галереи по нажатию enter
-function onPressEnterGallery(evt) {
-  if (evt.keyCode === 13) {
-    openGallery();
-  }
-}
+// получаем индекс правильной картинки в массиве объектов с данными по картинкам
+/* проверить есть ли у evt.target src
+    если есть , выдрать у src кусок, начиная с photos и до конца
+    пройтись по массиву photo и сравнить выдраный кусок с url каждого элемента массива
+    если совпало, вернуть номер этого элемента */
 
-// открытие галереи по клику
-function onClickPictures(evt) {
-  evt.preventDefault();
-  openGalleryPhoto(evt);
-
-  // активация листнера на кнопку esc
-  document.addEventListener('keydown', onPressEscGallery);
-}
-
-// сопостовление фото и галереи ,а так же  их вывод в галерею
-function openGalleryPhoto(evt) {
+function getPictureIndex(evt) {
   var target = evt.target;
   while (target !== target.target) {
     if (target.tagName === 'A') {
       var imgIndex = (target.children[0].attributes.src.value).replace(/\D/ig, '') - galleryIndexPhotoShift;
-      showGalleryPhoto(photo, imgIndex);
+      showGallery(photo, imgIndex);
       return;
     }
+
     target = target.parentNode;
   }
 }
 
-// закрытие галереи по esc
-function onPressEscGallery(evt) {
-  if (evt.keyCode === 27) {
-    closeGallery();
-  }
-}
-
-//  закрытие галереи по нажатию enter через фокус
-function onEnterCloseGallery(evt) {
-  if (evt.keyCode === 13) {
-    closeGallery();
-  }
+// открытие галереи по клику
+function onPicturesClick(evt) {
+  evt.preventDefault();
+  getPictureIndex(evt);
 }
 
 // закрытие галереи по клику
-function onClickCloseGallery(evt) {
+function onGalleryCloseClick(evt) {
   closeGallery();
 }
 
@@ -166,19 +179,29 @@ function openGallery(evt) {
   galleryOverlay.classList.remove('invisible');
 }
 
-// открытие закрытие
+// закрытие галереи
 function closeGallery(evt) {
+
   galleryOverlay.classList.add('invisible');
-  document.removeEventListener('keydown', onPressEscGallery);
 
-  // деактивация листнера на кнопку крести в галелери
-  closeGalleryPreview.removeEventListener('click', onClickCloseGallery);
+  // удаление листнера на кнопку крести в галелери
+  galleryOverlayClose.removeEventListener('click', onGalleryCloseClick);
 
-  // деактивация листнера на нажатие enter на крестик в галелери
-  document.removeEventListener('keydown', onEnterCloseGallery);
+  // удаляем обработчик закрытия галереи по нажатию на клавишу enter и фокусу на крестике
+  document.removeEventListener('keydown', onEnterGalleryClose);
+
+  // удаление листнера на кнопку esc
+  document.removeEventListener('keydown', onEscGalleryClose);
+
+  // создание листерна picture  при клике на него (генерируется окно с тем же фото на которое и было нажатие)
+  pictures.addEventListener('click', onPicturesClick);
+
+  // создание листерна picture  по нажатии Enter
+  document.addEventListener('keydown', onEnterGalleryOpen);
 }
 
 showPictures(photo, pictures);
+
 /*
 
 // блок формы закрузки фотографий
