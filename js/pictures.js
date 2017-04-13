@@ -48,9 +48,6 @@ var ESC_KEY_CODE = 27;
 // код клавиши enter
 var ENTER_KEY_CODE = 13;
 
-// открытие галереи по enter
-var onEnterGalleryOpen = onKeyPress(ENTER_KEY_CODE, openGallery);
-
 // закрытие галереи по enter
 var onEnterGalleryClose = onKeyPress(ENTER_KEY_CODE, closeGallery);
 
@@ -117,6 +114,9 @@ function renderPictures(picturesObj) {
   photosElement.querySelector('.picture-comments').textContent = picturesObj.comments;
   photosElement.querySelector('.picture-likes').textContent = picturesObj.likes;
 
+  // создание листерна picture  при клике на него (генерируется окно с тем же фото на которое и было нажатие)
+  pictures.addEventListener('click', onPicturesClick);
+
   return photosElement;
 }
 
@@ -128,12 +128,6 @@ function showPictures(array, container) {
 
   container.appendChild(fragment);
   uploadOverlay.classList.add('invisible');
-
-  // создание листерна picture  при клике на него (генерируется окно с тем же фото на которое и было нажатие)
-  pictures.addEventListener('click', onPicturesClick);
-
-  // создание листерна picture  по нажатии Enter
-  pictures.addEventListener('keydown', onEnterGalleryOpen);
 }
 
 // генерация галереи
@@ -155,49 +149,46 @@ function showGallery(picturesArray, pictureIndex) {
   // удаление листерна picture  при клике на него
   pictures.removeEventListener('click', onPicturesClick);
 
-  // удаление листерна picture  по нажатии Enter
-  pictures.removeEventListener('keydown', onEnterGalleryOpen);
 }
 
 // получаем индекс правильной картинки в массиве объектов с данными по картинкам
-function getPictureIndex(evt) {
+function getPicture(evt) {
   // для клика
   if (evt.target.tagName === 'IMG') {
     var adressPhoto = evt.target.attributes.src.nodeValue;
-    getIndexGallery(adressPhoto, photo);
+
+    photo.forEach(function (item, i, array) {
+      if (adressPhoto === item.url) {
+        showGallery(array, i);
+      }
+      return;
+    });
+
   }
 
   // для tab + enter
   if (evt.target.tagName === 'A') {
     var adressPhoto2 = evt.target.children[0].attributes.src.value;
-    getIndexGallery(adressPhoto2, photo);
-  }
-}
 
-// обрабатываем индекс правильной картинки при деиствиях с picture
-function getIndexGallery(photoItem, photoArray) {
-  photoArray.forEach(function (item, i, array) {
-    if (photoItem === item.url) {
-      showGallery(array, i);
-    }
-  });
+    photo.forEach(function (item, i, array) {
+      if (adressPhoto2 === item.url) {
+        showGallery(array, i);
+      }
+      return;
+    });
+
+  }
 }
 
 // открытие галереи по клику
 function onPicturesClick(evt) {
   evt.preventDefault();
-  getPictureIndex(evt);
+  getPicture(evt);
 }
 
 // закрытие галереи по клику
 function onGalleryCloseClick(evt) {
   closeGallery();
-}
-
-// открытие галереи
-function openGallery(evt) {
-  pictures.removeEventListener('keydown', onEnterGalleryOpen);
-  galleryOverlay.classList.remove('invisible');
 }
 
 // закрытие галереи
@@ -214,9 +205,6 @@ function closeGallery(evt) {
   // удаление листнера на кнопку esc
   document.removeEventListener('keydown', onEscGalleryClose);
 
-  // создание листерна picture  по нажатии Enter
-  pictures.addEventListener('keydown', onEnterGalleryOpen);
-
   // создание листерна picture  при клике на него
   pictures.addEventListener('click', onPicturesClick);
 }
@@ -229,16 +217,12 @@ function closeUpload(evt) {
 
   // создание листерна picture  при клике на него (генерируется окно с тем же фото на которое и было нажатие)
   pictures.addEventListener('click', onPicturesClick);
-
-  // создание листерна picture  по нажатии Enter
-  document.addEventListener('keydown', onEnterGalleryOpen);
 }
 
 // открытие формы кадрирование
 function openUpload(evt) {
   uploadOverlay.classList.remove('invisible');
   pictures.removeEventListener('click', onPicturesClick);
-  document.removeEventListener('keydown', onEnterGalleryOpen);
 }
 
 // закрытие формы кадрирование по клику
@@ -270,7 +254,7 @@ uploadForm.addEventListener('change', function (evt) {
   // закрытие формы по клику на кнопке Отправить
   uploadFormSubmitBtn.addEventListener('click', onClickCloseUpload);
 
-
+  // пока стоит фокус на коментариях форму не закрыть
   uploadDescription.addEventListener('focus', focusComment);
 
 });
