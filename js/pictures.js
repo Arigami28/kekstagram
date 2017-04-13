@@ -66,9 +66,6 @@ var uploadForm = document.querySelector('.upload-form');
 // кнопка Закрыть на форме upload
 var uploadFormCanselBtn = document.querySelector('.upload-form-cancel');
 
-// кнопка Отправить на форме upload
-var uploadFormSubmitBtn = document.querySelector('.upload-form-submit');
-
 // поле комментариев формы upload
 var uploadDescription = document.querySelector('.upload-form-description');
 
@@ -217,6 +214,7 @@ function closeUpload(evt) {
 
   // создание листерна picture  при клике на него (генерируется окно с тем же фото на которое и было нажатие)
   pictures.addEventListener('click', onPicturesClick);
+  document.removeEventListener('focus', focusCommentoff);
 }
 
 // открытие формы кадрирование
@@ -227,15 +225,12 @@ function openUpload(evt) {
 
 // закрытие формы кадрирование по клику
 function onClickCloseUpload(evt) {
-  evt.preventDefault();
   closeUpload();
 }
 
 // отмена закрытия формы пока фокус в поле коментариев кадрирования
 function focusComment(evt) {
   document.removeEventListener('keydown', onEscUploadClose);
-  uploadFormCanselBtn.removeEventListener('click', onClickCloseUpload);
-  uploadFormSubmitBtn.removeEventListener('click', onClickCloseUpload);
 }
 
 // вывод формы кадрирования после выбора файла в input
@@ -250,9 +245,6 @@ uploadForm.addEventListener('change', function (evt) {
 
   // закрытие формы по нажатию на крестик через Enter
   document.addEventListener('keydown', onEnterUploadClose);
-
-  // закрытие формы по клику на кнопке Отправить
-  uploadFormSubmitBtn.addEventListener('click', onClickCloseUpload);
 
   // пока стоит фокус на коментариях форму не закрыть
   uploadDescription.addEventListener('focus', focusComment);
