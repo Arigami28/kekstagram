@@ -1,7 +1,7 @@
 'use strict';
 
 // блок шаблона
-var photoItemsTemplate = document.querySelector('#picture-template').content;
+var photoItemsTemplate = getTemplateClone('#picture-template', '.picture');
 
 // блок кадрирования изображения
 var uploadOverlay = document.querySelector('.upload-overlay');
@@ -40,7 +40,7 @@ var maxLikes = 200;
 var photo = getPhotoItems(amountOfPhoto);
 
 // кнопка закрития превью галереи
-var closeButton = galleryOverlay.querySelector('.gallery-overlay-close');
+var closeUploadBtn = galleryOverlay.querySelector('.gallery-overlay-close');
 
 // код клавиши esc
 var ESC_KEY_CODE = 27;
@@ -57,14 +57,11 @@ var onEscGalleryClose = onKeyPress(ESC_KEY_CODE, closeGallery);
 // закрытие формы кадрирования по esc
 var onEscUploadClose = onKeyPress(ESC_KEY_CODE, closeUpload);
 
-// закрытие формы кадрирования по enter
-var onEnterUploadClose = onKeyPress(ENTER_KEY_CODE, closeUpload);
-
 // блок формы закрузки фотографий
 var uploadForm = document.querySelector('.upload-form');
 
 // кнопка Закрыть на форме upload
-var uploadFormCanselBtn = document.querySelector('.upload-form-cancel');
+var closeGalleryBtn = document.querySelector('.upload-form-cancel');
 
 // поле комментариев формы upload
 var uploadDescription = document.querySelector('.upload-form-description');
@@ -103,84 +100,71 @@ function getPhotoItems(item) {
   return photoItems;
 }
 
+// проверка и поиск шаблона
+function getTemplateClone(template, innerSelector) {
+  var templateElement = document.querySelector(template);
+  var elementToClone;
+
+  if ('content' in templateElement) {
+    elementToClone = templateElement.content.querySelector(innerSelector);
+  } else {
+    elementToClone = templateElement.querySelector(innerSelector);
+  }
+
+  return elementToClone;
+}
+
+/* ****************** */
+/*      ГАЛЕРЕЯ       */
+/* *****НАЧАЛО******* */
+
 // создаем элемент разметки с фото
-function renderPictures(picturesObj) {
+function renderPictures(picturesObj, pictureNumber) {
   var photosElement = photoItemsTemplate.cloneNode(true);
 
   photosElement.querySelector('img').src = picturesObj.url;
   photosElement.querySelector('.picture-comments').textContent = picturesObj.comments;
   photosElement.querySelector('.picture-likes').textContent = picturesObj.likes;
 
-  // создание листерна picture  при клике на него (генерируется окно с тем же фото на которое и было нажатие)
-  pictures.addEventListener('click', onPicturesClick);
+  // создание листерна picture  при клике на него
+  photosElement.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    showGallery(pictureNumber);
+  });
 
   return photosElement;
 }
 
+// генерация галереи
+function showGallery(pictureIndex) {
+  setActivePicture(pictureIndex);
+  galleryOverlay.classList.remove('invisible');
+
+  // создание листнера на кнопку крести в галереи
+  closeUploadBtn.addEventListener('click', onGalleryCloseClick);
+
+  // создание листнера на нажатие enter на кнопке крестик в галелери
+  closeUploadBtn.addEventListener('keydown', onEnterGalleryClose);
+
+  // создание листнера на кнопку esc
+  document.addEventListener('keydown', onEscGalleryClose);
+}
+
 // наполнение и отрисовка шаблона из массива
 function showPictures(array, container) {
-  array.forEach(function (item) {
-    fragment.appendChild(renderPictures(item));
+  array.forEach(function (pictureObj, pictureNumber) {
+    fragment.appendChild(renderPictures(pictureObj, pictureNumber));
   });
 
   container.appendChild(fragment);
   uploadOverlay.classList.add('invisible');
 }
 
-// генерация галереи
-function showGallery(picturesArray, pictureIndex) {
-  galleryImgUrl.src = picturesArray[pictureIndex].url;
-  galleryComments.textContent = picturesArray[pictureIndex].comments;
-  galleryLikes.textContent = picturesArray[pictureIndex].likes;
-  galleryOverlay.classList.remove('invisible');
-
-  // создание листнера на кнопку крести в галереи
-  closeButton.addEventListener('click', onGalleryCloseClick);
-
-  // создание листнера на кнопку esc
-  document.addEventListener('keydown', onEscGalleryClose);
-
-  // создание листнера на нажатие enter на кнопке крестик в галелери
-  document.addEventListener('keydown', onEnterGalleryClose);
-
-  // удаление листерна picture  при клике на него
-  pictures.removeEventListener('click', onPicturesClick);
-
-}
-
-// получаем индекс правильной картинки в массиве объектов с данными по картинкам
-function getPicture(evt) {
-  // для клика
-  if (evt.target.tagName === 'IMG') {
-    var adressPhoto = evt.target.attributes.src.nodeValue;
-
-    photo.forEach(function (item, i, array) {
-      if (adressPhoto === item.url) {
-        showGallery(array, i);
-      }
-      return;
-    });
-
-  }
-
-  // для tab + enter
-  if (evt.target.tagName === 'A') {
-    var adressPhoto2 = evt.target.children[0].attributes.src.value;
-
-    photo.forEach(function (item, i, array) {
-      if (adressPhoto2 === item.url) {
-        showGallery(array, i);
-      }
-      return;
-    });
-
-  }
-}
-
-// открытие галереи по клику
-function onPicturesClick(evt) {
-  evt.preventDefault();
-  getPicture(evt);
+// рендеринг элементов объекта гелереи
+function setActivePicture(pictureIndex) {
+  galleryImgUrl.src = photo[pictureIndex].url;
+  galleryComments.textContent = photo[pictureIndex].comments;
+  galleryLikes.textContent = photo[pictureIndex].likes;
 }
 
 // закрытие галереи по клику
@@ -190,42 +174,42 @@ function onGalleryCloseClick(evt) {
 
 // закрытие галереи
 function closeGallery(evt) {
-
   galleryOverlay.classList.add('invisible');
 
   // удаление листнера на кнопку крести в галелери
-  closeButton.removeEventListener('click', onGalleryCloseClick);
+  closeUploadBtn.removeEventListener('click', onGalleryCloseClick);
 
   // удаляем обработчик закрытия галереи по нажатию на клавишу enter и фокусу на крестике
-  document.removeEventListener('keydown', onEnterGalleryClose);
+  closeUploadBtn.removeEventListener('keydown', onEnterGalleryClose);
 
   // удаление листнера на кнопку esc
   document.removeEventListener('keydown', onEscGalleryClose);
+}
 
-  // создание листерна picture  при клике на него
-  pictures.addEventListener('click', onPicturesClick);
+/* ****************** */
+/*      ГАЛЕРЕЯ       */
+/* *****КОНЕЦ*******  */
+
+/* ****************** */
+/* ФОРМА КАДРИРОВАНИЯ */
+/* *****НАЧАЛО******* */
+
+// закрытие формы кадрирование по клику
+function onClickCloseUpload(evt) {
+  closeUpload();
+}
+
+// открытие формы кадрирование
+function openUpload(evt) {
+  uploadOverlay.classList.remove('invisible');
 }
 
 // закрытие формы кадрирование
 function closeUpload(evt) {
   uploadOverlay.classList.add('invisible');
   document.removeEventListener('keydown', onEscUploadClose);
-  uploadFormCanselBtn.removeEventListener('click', onClickCloseUpload);
-
-  // создание листерна picture  при клике на него (генерируется окно с тем же фото на которое и было нажатие)
-  pictures.addEventListener('click', onPicturesClick);
-  document.removeEventListener('focus', focusCommentoff);
-}
-
-// открытие формы кадрирование
-function openUpload(evt) {
-  uploadOverlay.classList.remove('invisible');
-  pictures.removeEventListener('click', onPicturesClick);
-}
-
-// закрытие формы кадрирование по клику
-function onClickCloseUpload(evt) {
-  closeUpload();
+  closeGalleryBtn.removeEventListener('click', onClickCloseUpload);
+  uploadDescription.removeEventListener('focus', focusComment);
 }
 
 // отмена закрытия формы пока фокус в поле коментариев кадрирования
@@ -241,14 +225,14 @@ uploadForm.addEventListener('change', function (evt) {
   document.addEventListener('keydown', onEscUploadClose);
 
   // закрытие формы по клику на крестик
-  uploadFormCanselBtn.addEventListener('click', onClickCloseUpload);
-
-  // закрытие формы по нажатию на крестик через Enter
-  document.addEventListener('keydown', onEnterUploadClose);
+  closeGalleryBtn.addEventListener('click', onClickCloseUpload);
 
   // пока стоит фокус на коментариях форму не закрыть
   uploadDescription.addEventListener('focus', focusComment);
-
 });
+
+/* ****************** */
+/* ФОРМА КАДРИРОВАНИЯ */
+/* *****КОНЕЦ******** */
 
 showPictures(photo, pictures);
