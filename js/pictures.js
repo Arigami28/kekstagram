@@ -43,7 +43,7 @@ var closeUploadBtn = document.querySelector('.upload-form-cancel');
 var closeGalleryBtn = document.querySelector('.gallery-overlay-close');
 
 // поле комментариев формы upload
-var uploadDescription = document.querySelector('.upload-form-description');
+var uploadComments = document.querySelector('.upload-form-description');
 
 // код клавиши esc
 var ESC_KEY_CODE = 27;
@@ -213,13 +213,13 @@ function closeUpload() {
   closeUploadBtn.removeEventListener('click', onCloseUploadBtnClick);
 }
 
-// отмена закрытия формы пока фокус в поле коментариев кадрирования
+// пока идет ввод коментариев форму не закрыть
 function commentFocus(evt) {
   evt.stopPropagation();
 }
 
 function onUploadFormChange(evt) {
-  openUpload(evt);
+  openUpload();
 
   // закрытие формы кадрирования по ESC
   document.addEventListener('keydown', onUploadEscPress);
@@ -227,8 +227,8 @@ function onUploadFormChange(evt) {
   // закрытие формы по клику на крестик
   closeUploadBtn.addEventListener('click', onCloseUploadBtnClick);
 
-  // пока стоит фокус на коментариях форму не закрыть
-  uploadDescription.addEventListener('keydown', onCloseCommentFocus);
+  // пока идет ввод в коментариях, форму не закрыть
+  uploadComments.addEventListener('keydown', onCloseCommentFocus);
 
 }
 
