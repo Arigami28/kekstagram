@@ -9,11 +9,8 @@ var uploadOverlay = document.querySelector('.upload-overlay');
 // блок для отрисовки всех изображений
 var pictures = document.querySelector('.pictures');
 
-// блок для отрисовки превью галереи
+// блок для отрисовки галереи
 var galleryOverlay = document.querySelector('.gallery-overlay');
-
-// пустой фрагмент для наполнения
-var fragment = document.createDocumentFragment();
 
 // массив комментариев
 var commentsArray = ['Всё отлично!', 'В целом всё неплохо. Но не всё.'];
@@ -21,13 +18,13 @@ var commentsArray = ['Всё отлично!', 'В целом всё непло�
 // количество фото
 var amountOfPhoto = 25;
 
-// счетчик лайков превью галереи
+// счетчик лайков галереи
 var galleryLikes = galleryOverlay.querySelector('.likes-count');
 
-// комментарии превью галереи
+// комментарии галереи
 var galleryComments = galleryOverlay.querySelector('.comments-count');
 
-// адрес фото превью галереи
+// адрес фото галереи
 var galleryImgUrl = galleryOverlay.querySelector('.gallery-overlay-image');
 
 // минимальное количество лайков
@@ -39,8 +36,14 @@ var maxLikes = 200;
 // массив с фото, количеством лайков и комментарием
 var photo = getPhotoItems(amountOfPhoto);
 
-// кнопка закрития превью галереи
-var closeUploadBtn = galleryOverlay.querySelector('.gallery-overlay-close');
+// кнопка Закрыть на форме upload
+var closeUploadBtn = document.querySelector('.upload-form-cancel');
+
+// кнопка закрытия превью галереи
+var closeGalleryBtn = document.querySelector('.gallery-overlay-close');
+
+// поле комментариев формы upload
+var uploadDescription = document.querySelector('.upload-form-description');
 
 // код клавиши esc
 var ESC_KEY_CODE = 27;
@@ -48,23 +51,17 @@ var ESC_KEY_CODE = 27;
 // код клавиши enter
 var ENTER_KEY_CODE = 13;
 
-// закрытие галереи по enter
-var onEnterGalleryClose = onKeyPress(ENTER_KEY_CODE, closeGallery);
+// обработчик нажатия enter на кнопку закрытия галереи
+var onCloseGalleryBtnEnter = onKeyPress(ENTER_KEY_CODE, closeGallery);
 
-// закрытие галереи по esc
-var onEscGalleryClose = onKeyPress(ESC_KEY_CODE, closeGallery);
+// обработчик нажатия esc на кнопку закрытия галереи
+var onGalleryEscPress = onKeyPress(ESC_KEY_CODE, closeGallery);
 
-// закрытие формы кадрирования по esc
-var onEscUploadClose = onKeyPress(ESC_KEY_CODE, closeUpload);
+// обработчик нажатия esc на кнопку закрытия формы кадрирования
+var onUploadEscPress = onKeyPress(ESC_KEY_CODE, closeUpload);
 
-// блок формы закрузки фотографий
+// блок формы загкрузки фотографий
 var uploadForm = document.querySelector('.upload-form');
-
-// кнопка Закрыть на форме upload
-var closeGalleryBtn = document.querySelector('.upload-form-cancel');
-
-// поле комментариев формы upload
-var uploadDescription = document.querySelector('.upload-form-description');
 
 // Нажатие клавишь (открытие/закрытие)
 function onKeyPress(keyCode, callback) {
@@ -100,7 +97,7 @@ function getPhotoItems(item) {
   return photoItems;
 }
 
-// проверка и поиск шаблона
+// получение нужного дом-элемента из шаблона для клонирования
 function getTemplateClone(template, innerSelector) {
   var templateElement = document.querySelector(template);
   var elementToClone;
@@ -135,23 +132,26 @@ function renderPictures(picturesObj, pictureNumber) {
   return photosElement;
 }
 
-// генерация галереи
+// отрисовка галереи
 function showGallery(pictureIndex) {
   setActivePicture(pictureIndex);
   galleryOverlay.classList.remove('invisible');
 
-  // создание листнера на кнопку крести в галереи
-  closeUploadBtn.addEventListener('click', onGalleryCloseClick);
+  // добавление обработчика клика по кнопке закрытия галереи
+  closeGalleryBtn.addEventListener('click', onGalleryCloseClick);
 
-  // создание листнера на нажатие enter на кнопке крестик в галелери
-  closeUploadBtn.addEventListener('keydown', onEnterGalleryClose);
+  // добавление обработчика нажатия на enter по кнопке закрытия галереи
+  closeGalleryBtn.addEventListener('keydown', onCloseGalleryBtnEnter);
 
-  // создание листнера на кнопку esc
-  document.addEventListener('keydown', onEscGalleryClose);
+  // добавление обработчика нажатия на esc
+  document.addEventListener('keydown', onGalleryEscPress);
 }
 
 // наполнение и отрисовка шаблона из массива
 function showPictures(array, container) {
+  // пустой фрагмент для наполнения
+  var fragment = document.createDocumentFragment();
+
   array.forEach(function (pictureObj, pictureNumber) {
     fragment.appendChild(renderPictures(pictureObj, pictureNumber));
   });
@@ -160,7 +160,7 @@ function showPictures(array, container) {
   uploadOverlay.classList.add('invisible');
 }
 
-// рендеринг элементов объекта гелереи
+// наполнение разметки гелереи
 function setActivePicture(pictureIndex) {
   galleryImgUrl.src = photo[pictureIndex].url;
   galleryComments.textContent = photo[pictureIndex].comments;
@@ -176,14 +176,14 @@ function onGalleryCloseClick(evt) {
 function closeGallery(evt) {
   galleryOverlay.classList.add('invisible');
 
-  // удаление листнера на кнопку крести в галелери
-  closeUploadBtn.removeEventListener('click', onGalleryCloseClick);
+  // удаление обработчика клика по кнопке закрытия галереи
+  closeGalleryBtn.removeEventListener('click', onGalleryCloseClick);
 
-  // удаляем обработчик закрытия галереи по нажатию на клавишу enter и фокусу на крестике
-  closeUploadBtn.removeEventListener('keydown', onEnterGalleryClose);
+  // удаление обработчика закрытия галереи по нажатию на клавишу enter и фокусу на крестике
+  closeGalleryBtn.removeEventListener('keydown', onCloseGalleryBtnEnter);
 
-  // удаление листнера на кнопку esc
-  document.removeEventListener('keydown', onEscGalleryClose);
+  // удаление обработчика нажатия на esc
+  document.removeEventListener('keydown', onGalleryEscPress);
 }
 
 /* ****************** */
@@ -194,42 +194,53 @@ function closeGallery(evt) {
 /* ФОРМА КАДРИРОВАНИЯ */
 /* *****НАЧАЛО******* */
 
-// закрытие формы кадрирование по клику
-function onClickCloseUpload(evt) {
+// закрытие формы кадрирования по клику
+function onCloseUploadBtnClick(evt) {
   closeUpload();
 }
 
-// открытие формы кадрирование
+// открытие формы кадрирования
 function openUpload(evt) {
   uploadOverlay.classList.remove('invisible');
 }
 
-// закрытие формы кадрирование
+// закрытие формы кадрирования
 function closeUpload(evt) {
   uploadOverlay.classList.add('invisible');
-  document.removeEventListener('keydown', onEscUploadClose);
-  closeGalleryBtn.removeEventListener('click', onClickCloseUpload);
-  uploadDescription.removeEventListener('focus', focusComment);
+  document.removeEventListener('keydown', onUploadEscPress);
+  closeUploadBtn.removeEventListener('click', onCloseUploadBtnClick);
+  uploadDescription.removeEventListener('focus', onCommentFocusEnable);
+  uploadDescription.removeEventListener('blur', onCommentFocusDisable);
 }
 
 // отмена закрытия формы пока фокус в поле коментариев кадрирования
-function focusComment(evt) {
-  document.removeEventListener('keydown', onEscUploadClose);
+function onCommentFocusEnable(evt) {
+  document.removeEventListener('keydown', onUploadEscPress);
+}
+
+// отмена фокуса и возвраз обработчика esc
+function onCommentFocusDisable(evt) {
+  document.addEventListener('keydown', onUploadEscPress);
+}
+
+function onUploadFormChange(evt) {
+  openUpload(evt);
+
+  // закрытие формы кадрирования по ESC
+  document.addEventListener('keydown', onUploadEscPress);
+
+  // закрытие формы по клику на крестик
+  closeUploadBtn.addEventListener('click', onCloseUploadBtnClick);
+
+  // пока стоит фокус на коментариях форму не закрыть
+  uploadDescription.addEventListener('focus', onCommentFocusEnable);
+
+  // когда форма коментариев теряет фокус активируется esc
+  uploadDescription.addEventListener('blur', onCommentFocusDisable);
 }
 
 // вывод формы кадрирования после выбора файла в input
-uploadForm.addEventListener('change', function (evt) {
-  openUpload(evt);
-
-  // закрытие формы кадрирование по ESC
-  document.addEventListener('keydown', onEscUploadClose);
-
-  // закрытие формы по клику на крестик
-  closeGalleryBtn.addEventListener('click', onClickCloseUpload);
-
-  // пока стоит фокус на коментариях форму не закрыть
-  uploadDescription.addEventListener('focus', focusComment);
-});
+uploadForm.addEventListener('change', onUploadFormChange);
 
 /* ****************** */
 /* ФОРМА КАДРИРОВАНИЯ */
