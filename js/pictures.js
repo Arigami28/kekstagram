@@ -21,9 +21,6 @@ var ENTER_KEY_CODE = 13;
 // блок шаблона
 var photoItemsTemplate = getTemplateClone('#picture-template', '.picture');
 
-// блок кадрирования изображения
-var uploadOverlay = document.querySelector('.upload-overlay');
-
 // блок для отрисовки всех изображений
 var pictures = document.querySelector('.pictures');
 
@@ -42,14 +39,8 @@ var galleryImg = galleryOverlay.querySelector('.gallery-overlay-image');
 // массив с фото, количеством лайков и комментарием
 var photo = getPhotoItems(AMOUNT_OF_PHOTO);
 
-// кнопка Закрыть на форме upload
-var closeUploadBtn = document.querySelector('.upload-form-cancel');
-
 // кнопка закрытия превью галереи
 var closeGalleryBtn = document.querySelector('.gallery-overlay-close');
-
-// поле комментариев формы upload
-var uploadComments = document.querySelector('.upload-form-description');
 
 // обработчик нажатия enter на кнопку закрытия галереи
 var onCloseGalleryBtnEnter = onKeyPress(ENTER_KEY_CODE, closeGallery);
@@ -57,13 +48,22 @@ var onCloseGalleryBtnEnter = onKeyPress(ENTER_KEY_CODE, closeGallery);
 // обработчик нажатия esc на кнопку закрытия галереи
 var onGalleryEscPress = onKeyPress(ESC_KEY_CODE, closeGallery);
 
+// блок кадрирования изображения
+var uploadOverlay = document.querySelector('.upload-overlay');
+
+// поле комментариев формы upload
+var uploadComments = document.querySelector('.upload-form-description');
+
+// кнопка Закрыть на форме upload
+var closeUploadBtn = document.querySelector('.upload-form-cancel');
+
 // обработчик нажатия esc на кнопку закрытия формы кадрирования
 var onUploadEscPress = onKeyPress(ESC_KEY_CODE, closeUpload);
 
-var onCommentEscPress = onKeyPress(ESC_KEY_CODE, function (evt) {
+// обработчик ввода коментариев в форме кадрирования
+var onUploadCommentsEscPress = onKeyPress(ESC_KEY_CODE, function (evt) {
   evt.stopPropagation();
-}
-);
+});
 
 // блок формы загкрузки фотографий
 var uploadForm = document.querySelector('.upload-form');
@@ -116,10 +116,6 @@ function getTemplateClone(template, innerSelector) {
   return elementToClone;
 }
 
-
-/* ГАЛЕРЕЯ  НАЧАЛО */
-
-
 // создаем элемент разметки с фото
 function renderPictures(picturesObj, pictureNumber) {
   var photosElement = photoItemsTemplate.cloneNode(true);
@@ -152,7 +148,7 @@ function showGallery(pictureIndex) {
   document.addEventListener('keydown', onGalleryEscPress);
 }
 
-// отрисовка миниатюр
+// отрисовка миниатюр  на страницу
 function showPictures(array, container) {
   // пустой фрагмент для наполнения
   var fragment = document.createDocumentFragment();
@@ -191,12 +187,6 @@ function closeGallery() {
   document.removeEventListener('keydown', onGalleryEscPress);
 }
 
-
-/* ГАЛЕРЕЯ  КОНЕЦ */
-
-/* ФОРМА КАДРИРОВАНИЯ НАЧАЛО */
-
-
 // обработчик клика по кнопке закрытия
 function onCloseUploadBtnClick() {
   closeUpload();
@@ -213,7 +203,7 @@ function openUpload() {
   closeUploadBtn.addEventListener('click', onCloseUploadBtnClick);
 
   // пока идет ввод в коментариях, форму не закрыть
-  uploadComments.addEventListener('keydown', onCommentEscPress);
+  uploadComments.addEventListener('keydown', onUploadCommentsEscPress);
 }
 
 // закрытие формы кадрирования
@@ -222,16 +212,14 @@ function closeUpload() {
 
   document.removeEventListener('keydown', onUploadEscPress);
   closeUploadBtn.removeEventListener('click', onCloseUploadBtnClick);
-  uploadComments.removeEventListener('keydown', onCommentEscPress);
+  uploadComments.removeEventListener('keydown', onUploadCommentsEscPress);
 }
 
-function onUploadFormChange(evt) {
+function onUploadFormChange() {
   openUpload();
 }
 
 // вывод формы кадрирования после выбора файла в input
 uploadForm.addEventListener('change', onUploadFormChange);
-
-/* ФОРМА КАДРИРОВАНИЯ КОНЕЦ */
 
 showPictures(photo, pictures);
