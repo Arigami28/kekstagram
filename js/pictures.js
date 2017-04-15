@@ -52,10 +52,10 @@ var onGalleryEscPress = onKeyPress(ESC_KEY_CODE, closeGallery);
 var uploadOverlay = document.querySelector('.upload-overlay');
 
 // поле комментариев формы upload
-var uploadComments = uploadForm.querySelector('.upload-form-description');
+var uploadComments = uploadOverlay.querySelector('.upload-form-description');
 
 // кнопка Закрыть на форме upload
-var closeUploadBtn = uploadForm.querySelector('.upload-form-cancel');
+var closeUploadBtn = uploadOverlay.querySelector('.upload-form-cancel');
 
 // блок формы загкрузки фотографий
 var uploadForm = document.querySelector('.upload-form');
@@ -72,7 +72,7 @@ var onUploadCommentsEscPress = onKeyPress(ESC_KEY_CODE, function (evt) {
 function onKeyPress(keyCode, callback) {
   return function (evt) {
     if (evt.keyCode === keyCode) {
-      callback();
+      callback(evt);
     }
   };
 }
