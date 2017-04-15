@@ -57,6 +57,9 @@ var uploadComments = document.querySelector('.upload-form-description');
 // кнопка Закрыть на форме upload
 var closeUploadBtn = document.querySelector('.upload-form-cancel');
 
+// блок формы загкрузки фотографий
+var uploadForm = document.querySelector('.upload-form');
+
 // обработчик нажатия esc на кнопку закрытия формы кадрирования
 var onUploadEscPress = onKeyPress(ESC_KEY_CODE, closeUpload);
 
@@ -64,9 +67,6 @@ var onUploadEscPress = onKeyPress(ESC_KEY_CODE, closeUpload);
 var onUploadCommentsEscPress = onKeyPress(ESC_KEY_CODE, function (evt) {
   evt.stopPropagation();
 });
-
-// блок формы загкрузки фотографий
-var uploadForm = document.querySelector('.upload-form');
 
 // Нажатие клавиш
 function onKeyPress(keyCode, callback) {
