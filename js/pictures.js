@@ -52,10 +52,10 @@ var onGalleryEscPress = onKeyPress(ESC_KEY_CODE, closeGallery);
 var uploadOverlay = document.querySelector('.upload-overlay');
 
 // поле комментариев формы upload
-var uploadComments = document.querySelector('.upload-form-description');
+var uploadComments = uploadForm.querySelector('.upload-form-description');
 
 // кнопка Закрыть на форме upload
-var closeUploadBtn = document.querySelector('.upload-form-cancel');
+var closeUploadBtn = uploadForm.querySelector('.upload-form-cancel');
 
 // блок формы загкрузки фотографий
 var uploadForm = document.querySelector('.upload-form');
