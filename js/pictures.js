@@ -51,14 +51,14 @@ var onGalleryEscPress = onKeyPress(ESC_KEY_CODE, closeGallery);
 // блок кадрирования изображения
 var uploadOverlay = document.querySelector('.upload-overlay');
 
+// блок формы загкрузки фотографий
+var uploadForm = document.querySelector('.upload-form');
+
 // поле комментариев формы upload
 var uploadComments = uploadOverlay.querySelector('.upload-form-description');
 
 // кнопка Закрыть на форме upload
 var closeUploadBtn = uploadOverlay.querySelector('.upload-form-cancel');
-
-// блок формы загкрузки фотографий
-var uploadForm = document.querySelector('.upload-form');
 
 // обработчик нажатия esc на кнопку закрытия формы кадрирования
 var onUploadEscPress = onKeyPress(ESC_KEY_CODE, closeUpload);
