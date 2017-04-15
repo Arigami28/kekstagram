@@ -43,7 +43,7 @@ var photo = getPhotoItems(AMOUNT_OF_PHOTO);
 var closeGalleryBtn = document.querySelector('.gallery-overlay-close');
 
 // обработчик нажатия enter на кнопку закрытия галереи
-var onCloseGalleryBtnEnter = onKeyPress(ENTER_KEY_CODE, closeGallery);
+var onGalleryCloseBtnEnter = onKeyPress(ENTER_KEY_CODE, closeGallery);
 
 // обработчик нажатия esc на кнопку закрытия галереи
 var onGalleryEscPress = onKeyPress(ESC_KEY_CODE, closeGallery);
@@ -142,7 +142,7 @@ function showGallery(pictureIndex) {
   closeGalleryBtn.addEventListener('click', onGalleryCloseBtnClick);
 
   // добавление обработчика нажатия на enter по кнопке закрытия галереи
-  closeGalleryBtn.addEventListener('keydown', onCloseGalleryBtnEnter);
+  closeGalleryBtn.addEventListener('keydown', onGalleryCloseBtnEnter);
 
   // добавление обработчика нажатия на esc
   document.addEventListener('keydown', onGalleryEscPress);
@@ -181,7 +181,7 @@ function closeGallery() {
   closeGalleryBtn.removeEventListener('click', onGalleryCloseBtnClick);
 
   // удаление обработчика закрытия галереи по нажатию на клавишу enter и фокусу на крестике
-  closeGalleryBtn.removeEventListener('keydown', onCloseGalleryBtnEnter);
+  closeGalleryBtn.removeEventListener('keydown', onGalleryCloseBtnEnter);
 
   // удаление обработчика нажатия на esc
   document.removeEventListener('keydown', onGalleryEscPress);
