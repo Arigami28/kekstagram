@@ -221,7 +221,11 @@ function closeGallery() {
 function closeUpload() {
   uploadOverlay.classList.add('invisible');
   inpuUploadtFile.value = '';
+  uploadComments.value = '';
+  uploadInputBtnResize.setAttribute('value', '100%');
+  uploadFormPreview.style.transform = 'scale(1)';
 
+  uploadFormPreview.className = 'filter-image-preview';
   document.removeEventListener('keydown', onUploadEscPress);
   closeUploadBtn.removeEventListener('click', onCloseUploadBtnClick);
   uploadComments.removeEventListener('keydown', onUploadCommentsEscPress);
@@ -280,24 +284,25 @@ function onUploadInvalid(evt) {
 
 // обработчик изменения размера изображения в меньшую сторону
 function onUploadBtnResizeMinus(evt) {
-  if (evt.target === uploadBtnMinus && uploadInputBtnResize.value !== MIN_RESIZE) {
-    var sizeValueMinus = parseInt(uploadInputBtnResize.value, 10) - STEP_RESIZE;
-    setScale(sizeValueMinus);
-  }
+  var sizeValueMinus = parseInt(uploadInputBtnResize.value, 10) - STEP_RESIZE;
+
+  setScale(sizeValueMinus, MIN_RESIZE);
 }
 
 // обработчик изменения размера изображения в большую сторону
 function onUploadBtnResizePlus(evt) {
-  if (evt.target === uploadBtnPlus && uploadInputBtnResize.value !== MAX_RESIZE) {
-    var sizeValuePlus = parseInt(uploadInputBtnResize.value, 10) + STEP_RESIZE;
-    setScale(sizeValuePlus);
-  }
+  var sizeValuePlus = parseInt(uploadInputBtnResize.value, 10) + STEP_RESIZE;
+  setScale(sizeValuePlus, MAX_RESIZE);
 }
 
 // вычисление размера изображения в форме кадрирования
-function setScale(sizeValue) {
-  uploadInputBtnResize.setAttribute('value', sizeValue + '%');
-  uploadFormPreview.style.transform = 'scale(' + sizeValue / 100 + ')';
+function setScale(sizeValue, limitValue) {
+  if (uploadInputBtnResize.value !== limitValue) {
+    uploadInputBtnResize.setAttribute('value', sizeValue + '%');
+    uploadFormPreview.style.transform = 'scale(' + sizeValue / 100 + ')';
+  }
+
+
 }
 
 // открытие формы кадрирования
