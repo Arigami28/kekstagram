@@ -6,9 +6,6 @@ var COMMENTS = ['Всё отлично!', 'В целом всё неплохо. 
 // количество фото
 var AMOUNT_OF_PHOTO = 25;
 
-// массив фильтров изображения в форме upload
-var FILTER_CLASS = ['filter-chrome', 'filter-sepia', 'filter-marvin', 'filter-phobos', 'filter-heat', 'filter-none'];
-
 // минимальное количество лайков
 var MIN_LIKES = 15;
 
@@ -60,13 +57,16 @@ var onGalleryCloseBtnEnter = onKeyPress(ENTER_KEY_CODE, closeGallery);
 // обработчик нажатия esc на кнопку закрытия галереи
 var onGalleryEscPress = onKeyPress(ESC_KEY_CODE, closeGallery);
 
+// поле отображение размера изображения
+var inpuUploadtFile = document.querySelector('input[name="filename"]');
+
 // блок кадрирования изображения
 var uploadOverlay = document.querySelector('.upload-overlay');
 
 // блок фильтров изображений
 var uploadFilter = document.querySelector('.upload-filter-controls');
 
-// блок формы загкрузки фотографий
+// блок формы загрузки фотографий
 var uploadForm = document.querySelector('.upload-form');
 
 // поле комментариев формы upload
@@ -79,16 +79,16 @@ var closeUploadBtn = uploadOverlay.querySelector('.upload-form-cancel');
 var uploadBtnResize = uploadOverlay.querySelector('.upload-resize-controls');
 
 // кнопка  уменьшения изображения в форме кадрирования
-var btnMinusClass = uploadBtnResize.querySelector('.upload-resize-controls-button-dec');
+var uploadBtnMinus = uploadBtnResize.querySelector('.upload-resize-controls-button-dec');
 
 // кнопка  увеличения изображения в форме кадрирования
-var btnPlusClass = uploadBtnResize.querySelector('.upload-resize-controls-button-inc');
+var uploadBtnPlus = uploadBtnResize.querySelector('.upload-resize-controls-button-inc');
 
 // поле отображение размера изображения
 var uploadInputBtnResize = uploadBtnResize.querySelector('input[type="text"]');
 
 // обработчик нажатия esc на кнопку закрытия формы кадрирования
-var onUploadEscPress = onKeyPress(ESC_KEY_CODE, onCloseUploadBtnClick);
+var onUploadEscPress = onKeyPress(ESC_KEY_CODE, closeUpload);
 
 // превью формы кадрирования
 var uploadFormPreview = document.querySelector('.filter-image-preview');
@@ -217,59 +217,21 @@ function closeGallery() {
   document.removeEventListener('keydown', onGalleryEscPress);
 }
 
-// обработчик  закрытия формы кадрирования
-function onCloseUploadBtnClick() {
+// закрытие формы кадрирования
+function closeUpload() {
   uploadOverlay.classList.add('invisible');
+  inpuUploadtFile.value = '';
 
   document.removeEventListener('keydown', onUploadEscPress);
   closeUploadBtn.removeEventListener('click', onCloseUploadBtnClick);
   uploadComments.removeEventListener('keydown', onUploadCommentsEscPress);
   uploadFilter.removeEventListener('click', onUploadFilterClick);
-  uploadBtnResize.removeEventListener('click', onUploadClickResize);
-}
-
-// обработчик клика на фильтры формы кадрирования
-function onUploadFilterClick(evt) {
-  var target = evt.target;
-  if (target.checked) {
-    classDelete(FILTER_CLASS, uploadFormPreview);
-    var inputValue = target.value;
-
-    document.querySelector('.filter-image-preview').classList.add('filter-' + inputValue);
-  }
-}
-
-// удаление всех не нужных классов у объекта
-function classDelete(arrayClass, path) {
-  arrayClass.forEach(function (item) {
-    path.classList.remove(item);
-  });
-}
-
-// обработчик изменения размера изображения
-function onUploadClickResize(evt) {
-  if (evt.target === btnMinusClass) {
-
-    if (uploadInputBtnResize.value !== MIN_RESIZE) {
-      var sizeValueMinus = +uploadInputBtnResize.value.replace(/\D/gi, ' ') - STEP_RESIZE;
-      uploadInputBtnResize.setAttribute('value', sizeValueMinus + '%');
-      uploadFormPreview.style.transform = 'scale(' + sizeValueMinus / 100 + ')';
-    }
-  }
-
-  if (evt.target === btnPlusClass) {
-
-    if (uploadInputBtnResize.value !== MAX_RESIZE) {
-      var sizeValuePlus = +uploadInputBtnResize.value.replace(/\D/gi, ' ') + STEP_RESIZE;
-      uploadInputBtnResize.setAttribute('value', sizeValuePlus + '%');
-      uploadFormPreview.style.transform = 'scale(' + sizeValuePlus / 100 + ')';
-    }
-  }
-
+  uploadBtnMinus.removeEventListener('click', onUploadBtnResizeMinus);
+  uploadBtnPlus.removeEventListener('click', onUploadBtnResizePlus);
 }
 
 // открытие формы кадрирования
-function onUploadFormChange() {
+function openUpload() {
   uploadOverlay.classList.remove('invisible');
 
   // закрытие формы кадрирования по ESC
@@ -284,8 +246,63 @@ function onUploadFormChange() {
   // применение фильта к изображению
   uploadFilter.addEventListener('click', onUploadFilterClick);
 
-  // изменение размера превью по клику
-  uploadBtnResize.addEventListener('click', onUploadClickResize);
+  // изменение размера в меньшую сторону
+  uploadBtnMinus.addEventListener('click', onUploadBtnResizeMinus);
+
+  // изменение размера в меньшую сторону
+  uploadBtnPlus.addEventListener('click', onUploadBtnResizePlus);
+
+  // валидация формы
+  uploadComments.addEventListener('invalid', onUploadInvalid);
+}
+
+// обработчик клика по кнопке закрытия
+function onCloseUploadBtnClick() {
+  closeUpload();
+}
+
+// обработчик клика на фильтры формы кадрирования
+function onUploadFilterClick(evt) {
+  setFilter(evt);
+}
+
+// установка фильтра
+function setFilter(evt) {
+  if (evt.target.checked) {
+    uploadFormPreview.className = 'filter-image-preview filter-' + evt.target.value;
+  }
+}
+
+// обработчик валидности формы кадрирования
+function onUploadInvalid(evt) {
+  uploadComments.style.outlineColor = 'red';
+}
+
+// обработчик изменения размера изображения в меньшую сторону
+function onUploadBtnResizeMinus(evt) {
+  if (evt.target === uploadBtnMinus && uploadInputBtnResize.value !== MIN_RESIZE) {
+    var sizeValueMinus = parseInt(uploadInputBtnResize.value, 10) - STEP_RESIZE;
+    setScale(sizeValueMinus);
+  }
+}
+
+// обработчик изменения размера изображения в большую сторону
+function onUploadBtnResizePlus(evt) {
+  if (evt.target === uploadBtnPlus && uploadInputBtnResize.value !== MAX_RESIZE) {
+    var sizeValuePlus = parseInt(uploadInputBtnResize.value, 10) + STEP_RESIZE;
+    setScale(sizeValuePlus);
+  }
+}
+
+// вычисление размера изображения в форме кадрирования
+function setScale(sizeValue) {
+  uploadInputBtnResize.setAttribute('value', sizeValue + '%');
+  uploadFormPreview.style.transform = 'scale(' + sizeValue / 100 + ')';
+}
+
+// открытие формы кадрирования
+function onUploadFormChange() {
+  openUpload();
 }
 
 // вывод формы кадрирования после выбора файла в input
