@@ -67,7 +67,7 @@ var filterForm = document.querySelector('.upload-filter');
 var uploadOverlay = document.querySelector('.upload-overlay');
 
 // блок фильтров изображений
-var filterControls = document.querySelector('.upload-filter-controls');
+var filterControls = filterForm.querySelector('.upload-filter-controls');
 
 // поле комментариев формы кадрирования
 var filterFormComments = filterForm.querySelector('.upload-form-description');
@@ -223,7 +223,7 @@ function closeFilterForm() {
   filterFormUploadBtn.removeEventListener('click', onFilterFormCloseBtnClick);
   filterFormComments.removeEventListener('keydown', onFilterFormCommentsEscPress);
   filterControls.removeEventListener('click', onFilterControlsClick);
-  filterFormMinusBtn.removeEventListener('click', onFilterFormResizeMinusClick);
+  filterFormMinusBtn.removeEventListener('click', onFilterFormBtnMinusClick);
   filterFormPlusBtn.removeEventListener('click', onFilterFormResizePlusClick);
 }
 
@@ -254,7 +254,7 @@ function openFilterForm() {
   filterControls.addEventListener('click', onFilterControlsClick);
 
   // изменение размера в меньшую сторону
-  filterFormMinusBtn.addEventListener('click', onFilterFormResizeMinusClick);
+  filterFormMinusBtn.addEventListener('click', onFilterFormBtnMinusClick);
 
   // изменение размера в меньшую сторону
   filterFormPlusBtn.addEventListener('click', onFilterFormResizePlusClick);
@@ -285,14 +285,14 @@ function onFilterFormCommentsInvalid(evt) {
   showError(evt);
 }
 
-// подцветка ошибок коментариев
+// показ ошибки на невалидном элементе
 function showError(evt) {
   var element = evt.target;
   element.style.outlineColor = element.validity.valid ? '' : 'red';
 }
 
 // обработчик клика на кнопку изменения размера изображения в меньшую сторону
-function onFilterFormResizeMinusClick(evt) {
+function onFilterFormBtnMinusClick(evt) {
   setScale(MIN_RESIZE);
 }
 
@@ -305,6 +305,7 @@ function onFilterFormResizePlusClick(evt) {
 function setScale(sizeLimit, sign) {
   var stepSize;
   var sizeValue;
+
   if (filterFormResizeInput.value !== sizeLimit) {
     stepSize = sign ? STEP_RESIZE : -STEP_RESIZE;
     sizeValue = parseInt(filterFormResizeInput.value, 10) + stepSize;
