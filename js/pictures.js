@@ -288,9 +288,7 @@ function onFilterFormCommentsInvalid(evt) {
 // подцветка ошибок коментариев
 function showError(evt) {
   var element = evt.target;
-  var error = element.validity.valid ? element.style.outlineColor = '' : element.style.outlineColor = 'red';
-
-  return error;
+  element.style.outlineColor = element.validity.valid ? '' : 'red';
 }
 
 // обработчик клика на кнопку изменения размера изображения в меньшую сторону
