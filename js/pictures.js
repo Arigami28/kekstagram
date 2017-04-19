@@ -293,7 +293,7 @@ function showError(evt) {
 
 // обработчик клика на кнопку изменения размера изображения в меньшую сторону
 function onFilterFormMinusBtnClick(evt) {
-  setScale(MIN_RESIZE);
+  setScale(MIN_RESIZE, 0);
 }
 
 // обработчик клика на кнопку изменения размера изображения в большую сторону
