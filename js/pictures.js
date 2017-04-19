@@ -67,7 +67,7 @@ var filterForm = document.querySelector('.upload-filter');
 var uploadOverlay = document.querySelector('.upload-overlay');
 
 // блок фильтров изображений
-var filter = document.querySelector('.upload-filter-controls');
+var filterControls = document.querySelector('.upload-filter-controls');
 
 // поле комментариев формы кадрирования
 var filterFormComments = filterForm.querySelector('.upload-form-description');
@@ -222,7 +222,7 @@ function closeFilterForm() {
   document.removeEventListener('keydown', onFilterFormEscPress);
   filterFormUploadBtn.removeEventListener('click', onFilterFormCloseBtnClick);
   filterFormComments.removeEventListener('keydown', onFilterFormCommentsEscPress);
-  filter.removeEventListener('click', onFilterClick);
+  filterControls.removeEventListener('click', onFilterClick);
   filterFormMinusBtn.removeEventListener('click', onFilterFormResizeMinusBtn);
   filterFormPlusBtn.removeEventListener('click', onFilterFormResizePlusBtn);
 }
@@ -251,7 +251,7 @@ function openFilterForm() {
   filterFormComments.addEventListener('keydown', onFilterFormCommentsEscPress);
 
   // применение фильта к изображению
-  filter.addEventListener('click', onFilterClick);
+  filterControls.addEventListener('click', onFilterClick);
 
   // изменение размера в меньшую сторону
   filterFormMinusBtn.addEventListener('click', onFilterFormResizeMinusBtn);
@@ -300,17 +300,9 @@ function onFilterFormResizePlusBtn(evt) {
 }
 
 // вычисление размера изображения в форме кадрирования
-function setScale(sizeLimit, sing) {
-  var sizeValue;
-
-  switch (sing) {
-    case 1:
-      sizeValue = parseInt(filterFormResizeInput.value, 10) + STEP_RESIZE;
-      break;
-    case 0:
-      sizeValue = parseInt(filterFormResizeInput.value, 10) - STEP_RESIZE;
-      break;
-  }
+function setScale(sizeLimit, sign) {
+  var stepSize = (sign === 1) ? STEP_RESIZE : -STEP_RESIZE;
+  var sizeValue = parseInt(filterFormResizeInput.value, 10) + stepSize;
 
   if (filterFormResizeInput.value !== sizeLimit) {
     filterFormResizeInput.setAttribute('value', sizeValue + '%');
