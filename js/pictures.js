@@ -260,7 +260,7 @@ function openFilterForm() {
   filterFormPlusBtn.addEventListener('click', onFilterFormResizePlusBtn);
 
   // валидация формы
-  filterFormComments.addEventListener('invalid', onFilterFormCommentsInvalid);
+  filterFormComments.addEventListener('input', onFilterFormCommentsInvalid);
 }
 
 // обработчик клика по кнопке закрытия
@@ -286,7 +286,11 @@ function onFilterFormCommentsInvalid(evt) {
 }
 
 function showError(evt) {
-  evt.target.style.outlineColor = 'red';
+  if (evt.target.validity.valid === false) {
+    evt.target.style.outlineColor = 'red';
+  } else {
+    evt.target.style.outlineColor = '';
+  }
 }
 
 // обработчик изменения размера изображения в меньшую сторону
