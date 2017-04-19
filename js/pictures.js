@@ -87,7 +87,7 @@ var filterFormResizeInput = filterForm.querySelector('input[type="text"]');
 // обработчик нажатия esc на кнопку закрытия формы кадрирования
 var onFilterFormEscPress = onKeyPress(ESC_KEY_CODE, closeFilterForm);
 
-// превью формы кадрирования
+// превью загружаемой фото
 var filterFormPreview = filterForm.querySelector('.filter-image-preview');
 
 // обработчик ввода коментариев в форме кадрирования
@@ -222,9 +222,9 @@ function closeFilterForm() {
   document.removeEventListener('keydown', onFilterFormEscPress);
   filterFormUploadBtn.removeEventListener('click', onFilterFormCloseBtnClick);
   filterFormComments.removeEventListener('keydown', onFilterFormCommentsEscPress);
-  filterControls.removeEventListener('click', onFilterClick);
-  filterFormMinusBtn.removeEventListener('click', onFilterFormResizeMinusBtn);
-  filterFormPlusBtn.removeEventListener('click', onFilterFormResizePlusBtn);
+  filterControls.removeEventListener('click', onFilterControlsClick);
+  filterFormMinusBtn.removeEventListener('click', onFilterFormResizeMinusClick);
+  filterFormPlusBtn.removeEventListener('click', onFilterFormResizePlusClick);
 }
 
 function clearFilterForm() {
@@ -251,13 +251,13 @@ function openFilterForm() {
   filterFormComments.addEventListener('keydown', onFilterFormCommentsEscPress);
 
   // применение фильта к изображению
-  filterControls.addEventListener('click', onFilterClick);
+  filterControls.addEventListener('click', onFilterControlsClick);
 
   // изменение размера в меньшую сторону
-  filterFormMinusBtn.addEventListener('click', onFilterFormResizeMinusBtn);
+  filterFormMinusBtn.addEventListener('click', onFilterFormResizeMinusClick);
 
   // изменение размера в меньшую сторону
-  filterFormPlusBtn.addEventListener('click', onFilterFormResizePlusBtn);
+  filterFormPlusBtn.addEventListener('click', onFilterFormResizePlusClick);
 
   // валидация формы
   filterFormComments.addEventListener('input', onFilterFormCommentsInvalid);
@@ -269,11 +269,11 @@ function onFilterFormCloseBtnClick() {
 }
 
 // обработчик клика на фильтры формы кадрирования
-function onFilterClick(evt) {
+function onFilterControlsClick(evt) {
   setFilter(evt);
 }
 
-// установка фильтра
+// установка фильтра на фото
 function setFilter(evt) {
   if (evt.target.checked) {
     filterFormPreview.className = 'filter-image-preview filter-' + evt.target.value;
@@ -285,21 +285,21 @@ function onFilterFormCommentsInvalid(evt) {
   showError(evt);
 }
 
+// подцветка ошибок коментариев
 function showError(evt) {
-  if (evt.target.validity.valid === false) {
-    evt.target.style.outlineColor = 'red';
-  } else {
-    evt.target.style.outlineColor = '';
-  }
+  var element = evt.target;
+  var error = element.validity.valid ? element.style.outlineColor = '' : element.style.outlineColor = 'red';
+
+  return error;
 }
 
-// обработчик изменения размера изображения в меньшую сторону
-function onFilterFormResizeMinusBtn(evt) {
-  setScale(MIN_RESIZE, 0);
+// обработчик клика на кнопку изменения размера изображения в меньшую сторону
+function onFilterFormResizeMinusClick(evt) {
+  setScale(MIN_RESIZE);
 }
 
-// обработчик изменения размера изображения в большую сторону
-function onFilterFormResizePlusBtn(evt) {
+// обработчик клика на кнопку изменения размера изображения в большую сторону
+function onFilterFormResizePlusClick(evt) {
   setScale(MAX_RESIZE, 1);
 }
 
@@ -315,7 +315,7 @@ function setScale(sizeLimit, sign) {
   }
 }
 
-// открытие формы кадрирования
+// обработчик изменения значения в форме загрузки фото
 function onUploadFormChange() {
   openFilterForm();
 }
