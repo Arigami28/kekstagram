@@ -301,10 +301,11 @@ function onFilterFormResizePlusBtn(evt) {
 
 // вычисление размера изображения в форме кадрирования
 function setScale(sizeLimit, sign) {
-  var stepSize = (sign === 1) ? STEP_RESIZE : -STEP_RESIZE;
-  var sizeValue = parseInt(filterFormResizeInput.value, 10) + stepSize;
-
+  var stepSize;
+  var sizeValue;
   if (filterFormResizeInput.value !== sizeLimit) {
+    stepSize = sign ? STEP_RESIZE : -STEP_RESIZE;
+    sizeValue = parseInt(filterFormResizeInput.value, 10) + stepSize;
     filterFormResizeInput.setAttribute('value', sizeValue + '%');
     filterFormPreview.style.transform = 'scale(' + sizeValue / 100 + ')';
   }
