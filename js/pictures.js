@@ -223,8 +223,8 @@ function closeFilterForm() {
   filterFormUploadBtn.removeEventListener('click', onFilterFormCloseBtnClick);
   filterFormComments.removeEventListener('keydown', onFilterFormCommentsEscPress);
   filterControls.removeEventListener('click', onFilterControlsClick);
-  filterFormMinusBtn.removeEventListener('click', onFilterFormBtnMinusClick);
-  filterFormPlusBtn.removeEventListener('click', onFilterFormResizePlusClick);
+  filterFormMinusBtn.removeEventListener('click', onFilterFormMinusBtnClick);
+  filterFormPlusBtn.removeEventListener('click', onFilterFormPlusBtnClick);
 }
 
 function clearFilterForm() {
@@ -254,10 +254,10 @@ function openFilterForm() {
   filterControls.addEventListener('click', onFilterControlsClick);
 
   // изменение размера в меньшую сторону
-  filterFormMinusBtn.addEventListener('click', onFilterFormBtnMinusClick);
+  filterFormMinusBtn.addEventListener('click', onFilterFormMinusBtnClick);
 
   // изменение размера в меньшую сторону
-  filterFormPlusBtn.addEventListener('click', onFilterFormResizePlusClick);
+  filterFormPlusBtn.addEventListener('click', onFilterFormPlusBtnClick);
 
   // валидация формы
   filterFormComments.addEventListener('input', onFilterFormCommentsInvalid);
@@ -292,12 +292,12 @@ function showError(evt) {
 }
 
 // обработчик клика на кнопку изменения размера изображения в меньшую сторону
-function onFilterFormBtnMinusClick(evt) {
+function onFilterFormMinusBtnClick(evt) {
   setScale(MIN_RESIZE);
 }
 
 // обработчик клика на кнопку изменения размера изображения в большую сторону
-function onFilterFormResizePlusClick(evt) {
+function onFilterFormPlusBtnClick(evt) {
   setScale(MAX_RESIZE, 1);
 }
 
