@@ -1,6 +1,12 @@
 'use strict';
+
 window.utils = (function () {
   return {
+    // код клавиши enter
+    ENTER_KEY_CODE: 13,
+
+    // код клавиши esc
+    ESC_KEY_CODE: 27,
 
     // генерация  номера случайного элемента массива
     getRandomItemAray: function (array) {

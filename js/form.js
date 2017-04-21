@@ -10,8 +10,6 @@ window.form = (function () {
 
   // шаг изменения изображения
   var STEP_RESIZE = 25;
-  // код клавиши esc
-  var ESC_KEY_CODE = 27;
 
   // блок формы кадрирования
   var filterForm = document.querySelector('.upload-filter');
@@ -20,7 +18,7 @@ window.form = (function () {
   var filterFormPreview = filterForm.querySelector('.filter-image-preview');
 
   // обработчик нажатия esc на кнопку закрытия формы кадрирования
-  var onFilterFormEscPress = window.utils.onKeyPress(ESC_KEY_CODE, closeFilterForm);
+  var onFilterFormEscPress = window.utils.onKeyPress(window.utils.ESC_KEY_CODE, closeFilterForm);
 
   // поле отображение размера изображения
   var filterFormResizeInput = filterForm.querySelector('input[type="text"]');
@@ -47,7 +45,7 @@ window.form = (function () {
   var uploadImgForm = document.querySelector('.upload-image');
 
   // обработчик ввода коментариев в форме кадрирования
-  var onFilterFormCommentsEscPress = window.utils.onKeyPress(ESC_KEY_CODE, function (evt) {
+  var onFilterFormCommentsEscPress = window.utils.onKeyPress(window.utils.ESC_KEY_CODE, function (evt) {
     evt.stopPropagation();
   });
 

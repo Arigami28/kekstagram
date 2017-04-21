@@ -19,43 +19,17 @@ window.gallery = (function () {
   // массив с фото, количеством лайков и комментарием
   var photo = window.data;
 
-  // блок шаблона
-  var photoItemsTemplate = window.utils.getTemplateClone('#picture-template', '.picture');
-
   // кнопка закрытия превью галереи
   var closeGalleryBtn = document.querySelector('.gallery-overlay-close');
 
   // обработчик нажатия enter на кнопку закрытия галереи
-  var onGalleryCloseBtnEnter = window.utils.onKeyPress(ENTER_KEY_CODE, closeGallery);
+  var onGalleryCloseBtnEnter = window.utils.onKeyPress(window.utils.ENTER_KEY_CODE, closeGallery);
 
   // обработчик нажатия esc на кнопку закрытия галереи
-  var onGalleryEscPress = window.utils.onKeyPress(ESC_KEY_CODE, closeGallery);
+  var onGalleryEscPress = window.utils.onKeyPress(window.utils.ESC_KEY_CODE, closeGallery);
 
   // блок кадрирования изображения
   var uploadOverlay = document.querySelector('.upload-overlay');
-
-  // код клавиши enter
-  var ENTER_KEY_CODE = 13;
-
-  // код клавиши esc
-  var ESC_KEY_CODE = 27;
-
-  // создаем элемент разметки с фото
-  function renderPictures(picturesObj, pictureNumber, callback) {
-    var photosElement = photoItemsTemplate.cloneNode(true);
-
-    photosElement.querySelector('img').src = picturesObj.url;
-    photosElement.querySelector('.picture-comments').textContent = picturesObj.comments;
-    photosElement.querySelector('.picture-likes').textContent = picturesObj.likes;
-
-    // добавление обработчика события при клике на миниатюру
-    photosElement.addEventListener('click', function (evt) {
-      evt.preventDefault();
-      callback(pictureNumber);
-    });
-
-    return photosElement;
-  }
 
   // вставка правильной картинки в разметку/контейнер галереи
   function setActivePicture(pictureIndex) {
@@ -85,7 +59,7 @@ window.gallery = (function () {
     var fragment = document.createDocumentFragment();
 
     array.forEach(function (pictureObj, pictureNumber) {
-      fragment.appendChild(renderPictures(pictureObj, pictureNumber, showGallery));
+      fragment.appendChild(window.picture.renderPictures(pictureObj, pictureNumber, showGallery));
     });
 
     container.appendChild(fragment);
