@@ -1,8 +1,6 @@
 'use strict';
 
 window.gallery = (function () {
-  // блок для отрисовки всех изображений
-  var pictures = document.querySelector('.pictures');
 
   // блок для отрисовки галереи
   var galleryOverlay = document.querySelector('.gallery-overlay');
@@ -16,9 +14,6 @@ window.gallery = (function () {
   // комментарии галереи
   var galleryComments = galleryOverlay.querySelector('.comments-count');
 
-  // массив с фото, количеством лайков и комментарием
-  var photo = window.data;
-
   // кнопка закрытия превью галереи
   var closeGalleryBtn = document.querySelector('.gallery-overlay-close');
 
@@ -28,42 +23,11 @@ window.gallery = (function () {
   // обработчик нажатия esc на кнопку закрытия галереи
   var onGalleryEscPress = window.utils.onKeyPress(window.utils.ESC_KEY_CODE, closeGallery);
 
-  // блок кадрирования изображения
-  var uploadOverlay = document.querySelector('.upload-overlay');
-
   // вставка правильной картинки в разметку/контейнер галереи
-  function setActivePicture(pictureIndex) {
-    galleryImg.src = photo[pictureIndex].url;
-    galleryComments.textContent = photo[pictureIndex].comments;
-    galleryLikes.textContent = photo[pictureIndex].likes;
-  }
-
-  // показываем галерею
-  function showGallery(pictureIndex) {
-    setActivePicture(pictureIndex);
-    galleryOverlay.classList.remove('invisible');
-
-    // добавление обработчика клика по кнопке закрытия галереи
-    closeGalleryBtn.addEventListener('click', onGalleryCloseBtnClick);
-
-    // добавление обработчика нажатия на enter по кнопке закрытия галереи
-    closeGalleryBtn.addEventListener('keydown', onGalleryCloseBtnEnter);
-
-    // добавление обработчика нажатия на esc
-    document.addEventListener('keydown', onGalleryEscPress);
-  }
-
-  // отрисовка миниатюр  на страницу
-  function showPictures(array, container) {
-    // пустой фрагмент для наполнения
-    var fragment = document.createDocumentFragment();
-
-    array.forEach(function (pictureObj, pictureNumber) {
-      fragment.appendChild(window.picture.renderPictures(pictureObj, pictureNumber, showGallery));
-    });
-
-    container.appendChild(fragment);
-    uploadOverlay.classList.add('invisible');
+  function setActivePicture(pictureIndex, photoArray) {
+    galleryImg.src = photoArray[pictureIndex].url;
+    galleryComments.textContent = photoArray[pictureIndex].comments;
+    galleryLikes.textContent = photoArray[pictureIndex].likes;
   }
 
   // обработчик события клик на кнопке закрытия галереи
@@ -85,7 +49,22 @@ window.gallery = (function () {
     document.removeEventListener('keydown', onGalleryEscPress);
   }
 
-  showPictures(photo, pictures);
+  return {
+  // показываем галерею
+    showGallery: function (pictureIndex, photoArray) {
+      setActivePicture(pictureIndex, photoArray);
+      galleryOverlay.classList.remove('invisible');
+
+      // добавление обработчика клика по кнопке закрытия галереи
+      closeGalleryBtn.addEventListener('click', onGalleryCloseBtnClick);
+
+      // добавление обработчика нажатия на enter по кнопке закрытия галереи
+      closeGalleryBtn.addEventListener('keydown', onGalleryCloseBtnEnter);
+
+      // добавление обработчика нажатия на esc
+      document.addEventListener('keydown', onGalleryEscPress);
+    }
+  };
 })();
 
 
