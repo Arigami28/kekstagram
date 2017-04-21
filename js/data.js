@@ -1,53 +1,32 @@
 'use strict';
 window.data = (function () {
-  return {
-    // код клавиши enter
-    ENTER_KEY_CODE: 13,
 
-    // минимальное количество лайков
-    MIN_LIKES: 15,
+  // минимальное количество лайков
+  var MIN_LIKES = 15;
 
-    // максимальное количество лайков
-    MAX_LIKES: 200,
+  // максимальное количество лайков
+  var MAX_LIKES = 200;
 
-    // код клавиши esc
-    ESC_KEY_CODE: 27,
+  // количество фото
+  var AMOUNT_OF_PHOTO = 25;
 
-    // блок шаблона
-    photoItemsTemplate: window.utils.getTemplateClone('#picture-template', '.picture'),
+  // массив комментариев
+  var COMMENTS = ['Всё отлично!', 'В целом всё неплохо. Но не всё.'];
 
-    // массив комментариев
-    COMMENTS: ['Всё отлично!', 'В целом всё неплохо. Но не всё.'],
+  // генерации объектов для элементов массива с фото, количеством лайков и комментарием
+  function getPhotoItems(amountOfItems) {
+    var photoItems = [];
 
-    // создаем элемент разметки с фото
-    renderPictures: function (picturesObj, pictureNumber, callback) {
-      var photosElement = window.data.photoItemsTemplate.cloneNode(true);
+    for (var i = 0; i < amountOfItems; i++) {
+      photoItems[i] = {
+        url: 'photos/' + (i + 1) + '.jpg',
+        likes: window.utils.getRandomNumber(MIN_LIKES, MAX_LIKES),
+        comments: COMMENTS[window.utils.getRandomItemAray(COMMENTS)]
+      };
+    }
 
-      photosElement.querySelector('img').src = picturesObj.url;
-      photosElement.querySelector('.picture-comments').textContent = picturesObj.comments;
-      photosElement.querySelector('.picture-likes').textContent = picturesObj.likes;
+    return photoItems;
+  }
 
-      // добавление обработчика события при клике на миниатюру
-      photosElement.addEventListener('click', function (evt) {
-        evt.preventDefault();
-        callback(pictureNumber);
-      });
-
-      return photosElement;
-    },
-    // генерации объектов для элементов массива с фото, количеством лайков и комментарием
-    getPhotoItems: function (item) {
-      var photoItems = [];
-
-      for (var i = 0; i < item; i++) {
-        photoItems[i] = {
-          url: 'photos/' + (i + 1) + '.jpg',
-          likes: window.utils.getRandomNumber(window.data.MIN_LIKES, window.data.MAX_LIKES),
-          comments: window.data.COMMENTS[window.utils.getRandomItemAray(window.data.COMMENTS)]
-        };
-      }
-
-      return photoItems;
-    },
-  };
-}());
+  return getPhotoItems(AMOUNT_OF_PHOTO);
+})();
