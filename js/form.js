@@ -49,6 +49,18 @@ window.form = (function () {
     evt.stopPropagation();
   });
 
+  // блок с ползунком
+  var uploadFilterLevel = filterForm.querySelector('.upload-filter-level');
+
+  // линия хождения ползунка насышености фильра
+  var filterLine = uploadFilterLevel.querySelector('.upload-filter-level-line');
+
+  // ползунок насыщености фильтра
+  var filterPin = uploadFilterLevel.querySelector('.upload-filter-level-pin');
+
+  // прогресс фильтра
+  var filterProgress = uploadFilterLevel.querySelector('.upload-filter-level-val');
+
   // закрытие формы кадрирования
   function closeFilterForm() {
     uploadOverlay.classList.add('invisible');
@@ -76,7 +88,7 @@ window.form = (function () {
   // открытие формы кадрирования
   function openFilterForm() {
     uploadOverlay.classList.remove('invisible');
-
+    uploadFilterLevel.classList.add('invisible');
     // закрытие формы кадрирования по ESC
     document.addEventListener('keydown', onFilterFormEscPress);
 
@@ -99,7 +111,7 @@ window.form = (function () {
     filterFormComments.addEventListener('input', onFilterFormCommentsInvalid);
   }
 
-   // обработчик клика по кнопке закрытия
+  // обработчик клика по кнопке закрытия
   function onFilterFormCloseBtnClick() {
     closeFilterForm();
   }
@@ -112,7 +124,13 @@ window.form = (function () {
   // установка фильтра на фото
   function setFilter(evt) {
     if (evt.target.checked) {
+      uploadFilterLevel.classList.remove('invisible');
+      filterPin.style.left = '0px';
+      filterProgress.style.width = '0px';
       filterFormPreview.className = 'filter-image-preview filter-' + evt.target.value;
+    }
+    if (evt.target.value === 'none') {
+      uploadFilterLevel.classList.add('invisible');
     }
   }
 
@@ -128,12 +146,12 @@ window.form = (function () {
   }
 
   // обработчик клика на кнопку изменения размера изображения в меньшую сторону
-  function onFilterFormMinusBtnClick(evt) {
+  function onFilterFormMinusBtnClick() {
     setScale(MIN_RESIZE, 0);
   }
 
   // обработчик клика на кнопку изменения размера изображения в большую сторону
-  function onFilterFormPlusBtnClick(evt) {
+  function onFilterFormPlusBtnClick() {
     setScale(MAX_RESIZE, 1);
   }
 
@@ -154,6 +172,61 @@ window.form = (function () {
   function onUploadFormChange() {
     openFilterForm();
   }
+
+  // событие нажатие мышки и удержания
+  filterPin.addEventListener('mousedown', function (evt) {
+    var starCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+    evt.preventDefault();
+
+    function onMouseMove(moveEvt) {
+      moveEvt.preventDefault();
+      // смешение
+      var shift = {
+        x: starCoords.x - moveEvt.clientX
+      };
+
+      // перезапись кординат на новые
+      starCoords = {
+        x: moveEvt.clientX
+      };
+
+      filterPin.style.left = (filterPin.offsetLeft - shift.x) + 'px';
+      filterProgress.style.width = (filterPin.offsetLeft - shift.x) + 'px';
+      var maxCoords = 455;
+      var minCoords = 0;
+
+      if (parseInt(filterPin.style.left, 10) <= minCoords) {
+        filterPin.style.left = minCoords + 'px';
+      }
+
+      if (parseInt(filterPin.style.left, 10) >= maxCoords) {
+        filterPin.style.left = maxCoords + 'px';
+      }
+    }
+
+    function onMouseUp(upEvt) {
+      upEvt.preventDefault();
+
+      filterPin.removeEventListener('blur', onMouseBlure);
+      filterLine.removeEventListener('mousemove', onMouseMove);
+      filterLine.removeEventListener('mouseup', onMouseUp);
+    }
+
+    function onMouseBlure(blureEvt) {
+      blureEvt.preventDefault();
+
+      filterPin.removeEventListener('blur', onMouseBlure);
+      filterLine.removeEventListener('mousemove', onMouseMove);
+      filterLine.removeEventListener('mouseup', onMouseUp);
+    }
+
+    filterPin.addEventListener('blur', onMouseBlure);
+    filterLine.addEventListener('mousemove', onMouseMove);
+    filterLine.addEventListener('mouseup', onMouseUp);
+  });
 
   // вывод формы кадрирования после выбора файла в input
   uploadImgForm.addEventListener('change', onUploadFormChange);
