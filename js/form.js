@@ -219,6 +219,9 @@ window.form = (function () {
         x: moveEvt.clientX
       };
 
+      filterPin.style.left = (filterPin.offsetLeft - shift.x) + 'px';
+      filterProgress.style.width = (filterPin.offsetLeft - shift.x) + 'px';
+
       if (parseInt(filterPin.style.left, 10) <= PIN_MIN_COORDS) {
         filterPin.style.left = PIN_MIN_COORDS + 'px';
       }
@@ -226,9 +229,6 @@ window.form = (function () {
       if (parseInt(filterPin.style.left, 10) >= PIN_MAX_COORDS) {
         filterPin.style.left = PIN_MAX_COORDS + 'px';
       }
-
-      filterPin.style.left = (filterPin.offsetLeft - shift.x) + 'px';
-      filterProgress.style.width = (filterPin.offsetLeft - shift.x) + 'px';
 
       var coordPin = filterPin.offsetLeft - shift.x;
       setFilter(coordPin);
