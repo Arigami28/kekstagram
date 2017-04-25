@@ -130,7 +130,7 @@ window.form = (function () {
     getFilter(evt);
   }
 
-  // получение фильтра на фото
+  // получение фильтра для фото
   function getFilter(evt) {
     if (evt.target.checked) {
       uploadFilterLevel.classList.toggle('invisible', evt.target.value === 'none');
@@ -198,12 +198,12 @@ window.form = (function () {
 
   // обработчик события 'клик' на ползунке фильтра
   function onFilterPinMouseDown(evt) {
+    evt.preventDefault();
+
     var starCoords = {
       x: evt.clientX,
       y: evt.clientY
     };
-
-    evt.preventDefault();
 
     // обработчик события движения мышки
     function onDocumentMouseMove(moveEvt) {
@@ -257,7 +257,7 @@ window.form = (function () {
     document.addEventListener('mouseup', onDocumentMouseUp);
   }
 
-  // добавление обработчика mousedown
+  // добавление обработчика mousedown для ползунка формы кадрирования
   filterPin.addEventListener('mousedown', onFilterPinMouseDown);
 
   // добавление обработчика на вывод формы кадрирования после выбора файла в input
