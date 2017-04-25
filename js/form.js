@@ -58,9 +58,6 @@ window.form = (function () {
   // блок с ползунком
   var uploadFilterLevel = filterForm.querySelector('.upload-filter-level');
 
-  // линия хождения ползунка насышености фильра
-  // var filterLine = uploadFilterLevel.querySelector('.upload-filter-level-line');
-
   // ползунок насыщености фильтра
   var filterPin = uploadFilterLevel.querySelector('.upload-filter-level-pin');
 
@@ -68,7 +65,7 @@ window.form = (function () {
   var filterProgress = uploadFilterLevel.querySelector('.upload-filter-level-val');
 
   // выбраный фильтр
-  var defaultFilter = null;
+  var defaultFilter = 'none';
 
   // закрытие формы кадрирования
   function closeFilterForm() {
@@ -133,15 +130,14 @@ window.form = (function () {
     getFilter(evt);
   }
 
-  // установка фильтра на фото
+  // получение фильтра на фото
   function getFilter(evt) {
     if (evt.target.checked) {
       uploadFilterLevel.classList.toggle('invisible', evt.target.value === 'none');
-      filterImgPreview.className = 'filter-image-preview filter-' + evt.target.value + '';
       defaultFilter = evt.target.value;
       filterPin.style.left = '0px';
       filterProgress.style.width = '0px';
-      filterImgPreview.style.filter = 'none';
+      setFilter(PIN_MIN_COORDS);
     }
   }
 
@@ -184,7 +180,7 @@ window.form = (function () {
     openFilterForm();
   }
 
-  // применение фильтра по движению ползунка
+  // установка фильтра по движению ползунка
   function setFilter(coords) {
     switch (defaultFilter) {
       case 'chrome': filterImgPreview.style.filter = 'grayscale(' + (coords / PIN_MAX_COORDS) + ')';
@@ -210,7 +206,7 @@ window.form = (function () {
     evt.preventDefault();
 
     // обработчик события движения мышки при нажатии
-    function onMouseMove(moveEvt) {
+    function onDocumentMouseMove(moveEvt) {
       moveEvt.preventDefault();
 
       // смещение
@@ -223,6 +219,7 @@ window.form = (function () {
         x: moveEvt.clientX
       };
 
+
       if (parseInt(filterPin.style.left, 10) <= PIN_MIN_COORDS) {
         filterPin.style.left = PIN_MIN_COORDS + 'px';
       }
@@ -234,17 +231,17 @@ window.form = (function () {
       filterPin.style.left = (filterPin.offsetLeft - shift.x) + 'px';
       filterProgress.style.width = (filterPin.offsetLeft - shift.x) + 'px';
 
-      var coords = filterPin.offsetLeft - shift.x;
-      setFilter(coords);
+      var coordsPin = filterPin.offsetLeft - shift.x;
+      setFilter(coordsPin);
     }
 
     // обработчик события отжатия клавиши мыши
-    function onMouseUp(upEvt) {
+    function onDocumentMouseUp(upEvt) {
       upEvt.preventDefault();
 
       filterPin.removeEventListener('blur', onFilterPinMouseBlure);
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
+      document.removeEventListener('mousemove', onDocumentMouseMove);
+      document.removeEventListener('mouseup', onDocumentMouseUp);
     }
 
     // обработчик события потери фокуса с ползунка
@@ -252,13 +249,13 @@ window.form = (function () {
       blureEvt.preventDefault();
 
       filterPin.removeEventListener('blur', onFilterPinMouseBlure);
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
+      document.removeEventListener('mousemove', onDocumentMouseMove);
+      document.removeEventListener('mouseup', onDocumentMouseUp);
     }
 
     filterPin.addEventListener('blur', onFilterPinMouseBlure);
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('mousemove', onDocumentMouseMove);
+    document.addEventListener('mouseup', onDocumentMouseUp);
   }
 
   // событие нажатие мышки и удержания
