@@ -200,6 +200,7 @@ window.form = (function () {
   function onFilterPinMouseDown(evt) {
     evt.preventDefault();
 
+    // начальные координаты
     var starCoords = {
       x: evt.clientX,
       y: evt.clientY
@@ -214,13 +215,16 @@ window.form = (function () {
         x: starCoords.x - moveEvt.clientX
       };
 
+      // текущие координаты ползунка
+      var coordPin = filterPin.offsetLeft - shift.x;
+
       // перезапись кординат на новые
       starCoords = {
         x: moveEvt.clientX
       };
 
-      filterPin.style.left = (filterPin.offsetLeft - shift.x) + 'px';
-      filterProgress.style.width = (filterPin.offsetLeft - shift.x) + 'px';
+      filterPin.style.left = coordPin + 'px';
+      filterProgress.style.width = coordPin + 'px';
 
       if (parseInt(filterPin.style.left, 10) <= PIN_MIN_COORDS || parseInt(filterProgress.style.width, 10) <= PIN_MIN_COORDS) {
         filterPin.style.left = PIN_MIN_COORDS + 'px';
@@ -231,8 +235,6 @@ window.form = (function () {
         filterPin.style.left = PIN_MAX_COORDS + 'px';
         filterProgress.style.width = PIN_MAX_COORDS + 'px';
       }
-
-      var coordPin = filterPin.offsetLeft - shift.x;
 
       setFilter(coordPin);
     }
