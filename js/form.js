@@ -120,12 +120,12 @@ window.form = (function () {
     filterFormComments.addEventListener('input', onFilterFormCommentsInvalid);
   }
 
-  // обработчик клика по кнопке закрытия
+  // обработчик клика по кнопке закрытия формы кадрирования
   function onFilterFormCloseBtnClick() {
     closeFilterForm();
   }
 
-  // обработчик клика на фильтры формы кадрирования
+  // обработчик клика по фильтрам формы кадрирования
   function onFilterControlsClick(evt) {
     getFilter(evt);
   }
@@ -180,23 +180,23 @@ window.form = (function () {
     openFilterForm();
   }
 
-  // установка фильтра по движению ползунка
-  function setFilter(coords) {
+  // установка фильтра
+  function setFilter(coord) {
     switch (defaultFilter) {
-      case 'chrome': filterImgPreview.style.filter = 'grayscale(' + (coords / PIN_MAX_COORDS) + ')';
+      case 'chrome': filterImgPreview.style.filter = 'grayscale(' + (coord / PIN_MAX_COORDS).toFixed(1) + ')';
         break;
-      case 'sepia': filterImgPreview.style.filter = 'sepia(' + (coords / PIN_MAX_COORDS) + ')';
+      case 'sepia': filterImgPreview.style.filter = 'sepia(' + (coord / PIN_MAX_COORDS).toFixed(1) + ')';
         break;
-      case 'marvin': filterImgPreview.style.filter = 'invert(' + (coords / PIN_MAX_COORDS) * 100 + '%' + ')';
+      case 'marvin': filterImgPreview.style.filter = 'invert(' + (coord / PIN_MAX_COORDS).toFixed(1) * 100 + '%' + ')';
         break;
-      case 'phobos': filterImgPreview.style.filter = 'blur(' + (coords / PIN_MAX_COORDS) * 3 + 'px' + ')';
+      case 'phobos': filterImgPreview.style.filter = 'blur(' + (coord / PIN_MAX_COORDS).toFixed(1) * 3 + 'px' + ')';
         break;
-      case 'heat': filterImgPreview.style.filter = 'brightness(' + (coords / PIN_MAX_COORDS) * 3 + ')';
+      case 'heat': filterImgPreview.style.filter = 'brightness(' + (coord / PIN_MAX_COORDS).toFixed(1) * 3 + ')';
         break;
     }
   }
 
-  // обработчик события клика на ползунке фильтра
+  // обработчик события 'клик' на ползунке фильтра
   function onFilterPinMouseDown(evt) {
     var starCoords = {
       x: evt.clientX,
@@ -205,7 +205,7 @@ window.form = (function () {
 
     evt.preventDefault();
 
-    // обработчик события движения мышки при нажатии
+    // обработчик события движения мышки
     function onDocumentMouseMove(moveEvt) {
       moveEvt.preventDefault();
 
@@ -219,7 +219,6 @@ window.form = (function () {
         x: moveEvt.clientX
       };
 
-
       if (parseInt(filterPin.style.left, 10) <= PIN_MIN_COORDS) {
         filterPin.style.left = PIN_MIN_COORDS + 'px';
       }
@@ -231,37 +230,37 @@ window.form = (function () {
       filterPin.style.left = (filterPin.offsetLeft - shift.x) + 'px';
       filterProgress.style.width = (filterPin.offsetLeft - shift.x) + 'px';
 
-      var coordsPin = filterPin.offsetLeft - shift.x;
-      setFilter(coordsPin);
+      var coordPin = filterPin.offsetLeft - shift.x;
+      setFilter(coordPin);
     }
 
-    // обработчик события отжатия клавиши мыши
+    // обработчик MouseUp на document
     function onDocumentMouseUp(upEvt) {
       upEvt.preventDefault();
 
-      filterPin.removeEventListener('blur', onFilterPinMouseBlure);
+      filterPin.removeEventListener('blur', onFilterPinMouseblur);
       document.removeEventListener('mousemove', onDocumentMouseMove);
       document.removeEventListener('mouseup', onDocumentMouseUp);
     }
 
-    // обработчик события потери фокуса с ползунка
-    function onFilterPinMouseBlure(blureEvt) {
-      blureEvt.preventDefault();
+    // обработчик потери фокуса с ползунка
+    function onFilterPinMouseblur(blurEvt) {
+      blurEvt.preventDefault();
 
-      filterPin.removeEventListener('blur', onFilterPinMouseBlure);
+      filterPin.removeEventListener('blur', onFilterPinMouseblur);
       document.removeEventListener('mousemove', onDocumentMouseMove);
       document.removeEventListener('mouseup', onDocumentMouseUp);
     }
 
-    filterPin.addEventListener('blur', onFilterPinMouseBlure);
+    filterPin.addEventListener('blur', onFilterPinMouseblur);
     document.addEventListener('mousemove', onDocumentMouseMove);
     document.addEventListener('mouseup', onDocumentMouseUp);
   }
 
-  // событие нажатие мышки и удержания
+  // добавление обработчика mousedown
   filterPin.addEventListener('mousedown', onFilterPinMouseDown);
 
-  // вывод формы кадрирования после выбора файла в input
+  // добавление обработчика на вывод формы кадрирования после выбора файла в input
   uploadImgForm.addEventListener('change', onUploadFormChange);
 })();
 
