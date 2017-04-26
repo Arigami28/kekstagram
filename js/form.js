@@ -226,12 +226,12 @@ window.form = (function () {
       filterPin.style.left = coordPin + 'px';
       filterProgress.style.width = coordPin + 'px';
 
-      if (parseInt(filterPin.style.left, 10) <= PIN_MIN_COORDS || parseInt(filterProgress.style.width, 10) <= PIN_MIN_COORDS) {
+      if (parseInt(filterPin.style.left, 10) <= PIN_MIN_COORDS) {
         filterPin.style.left = PIN_MIN_COORDS + 'px';
         filterProgress.style.width = PIN_MIN_COORDS + 'px';
       }
 
-      if (parseInt(filterPin.style.left, 10) >= PIN_MAX_COORDS || parseInt(filterProgress.style.width, 10) >= PIN_MAX_COORDS) {
+      if (parseInt(filterPin.style.left, 10) >= PIN_MAX_COORDS) {
         filterPin.style.left = PIN_MAX_COORDS + 'px';
         filterProgress.style.width = PIN_MAX_COORDS + 'px';
       }
