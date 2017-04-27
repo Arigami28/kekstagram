@@ -8,9 +8,6 @@ window.form = (function () {
   // минимальный размер изображения
   var MIN_RESIZE = '25%';
 
-  // шаг изменения изображения
-  var STEP_RESIZE = 25;
-
   // максимальные координаты ползунка
   var PIN_MAX_COORDS = 455;
 
@@ -66,6 +63,9 @@ window.form = (function () {
 
   // выбраный фильтр
   var defaultFilter = 'none';
+
+  // блок управления изображения формы кадрирования
+  var scaleElement = document.querySelector('.upload-resize-controls');
 
   // закрытие формы кадрирования
   function closeFilterForm() {
@@ -154,25 +154,12 @@ window.form = (function () {
 
   // обработчик клика на кнопку изменения размера изображения в меньшую сторону
   function onFilterFormMinusBtnClick() {
-    setScale(MIN_RESIZE, 0);
+    window.scale(scaleElement, MIN_RESIZE, 0);
   }
 
   // обработчик клика на кнопку изменения размера изображения в большую сторону
   function onFilterFormPlusBtnClick() {
-    setScale(MAX_RESIZE, 1);
-  }
-
-  // вычисление размера изображения в форме кадрирования
-  function setScale(sizeLimit, sign) {
-    var stepSize;
-    var sizeValue;
-
-    if (filterFormResizeInput.value !== sizeLimit) {
-      stepSize = sign ? STEP_RESIZE : -STEP_RESIZE;
-      sizeValue = parseInt(filterFormResizeInput.value, 10) + stepSize;
-      filterFormResizeInput.setAttribute('value', sizeValue + '%');
-      filterImgPreview.style.transform = 'scale(' + sizeValue / 100 + ')';
-    }
+    window.scale(scaleElement, MAX_RESIZE, 1);
   }
 
   // обработчик изменения значения в форме загрузки фото
