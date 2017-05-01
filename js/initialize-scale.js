@@ -4,24 +4,30 @@ window.scale = (function () {
   // поле отображение размера изображения
   var filterFormResizeInput = document.querySelector('input[type="text"]');
 
-  // блок управления размером изображения формы кадрирования
-  var scaleElement = document.querySelector('.upload-resize-controls');
-
-  // превью загружаемой фото
-  var filterImgPreview = document.querySelector('.filter-image-preview');
-
   // шаг изменения изображения
   var STEP_RESIZE = 25;
 
-  var scale = function (sign) {
-    var stepSize = sign ? STEP_RESIZE : -STEP_RESIZE;
-    var sizeValue = parseInt(filterFormResizeInput.value, 10) + stepSize;
-    filterFormResizeInput.setAttribute('value', sizeValue + '%');
-    filterImgPreview.style.transform = 'scale(' + sizeValue / 100 + ')';
-  };
-  return function (element, sizeLimit, sign) {
-    if (filterFormResizeInput.value !== sizeLimit && element === scaleElement) {
-      scale(sign);
+  // максимальный размер изображения
+  var MAX_RESIZE = '100%';
+
+  // минимальный размер изображения
+  var MIN_RESIZE = '25%';
+  // превью загружаемой фото
+
+  return {
+    set: function (sizeLimit, sign, callback) {
+      if (filterFormResizeInput.value !== sizeLimit) {
+        var stepSize = sign ? STEP_RESIZE : -STEP_RESIZE;
+        var sizeValue = parseInt(filterFormResizeInput.value, 10) + stepSize;
+        callback(sizeValue);
+      }
+    },
+    onFilterFormMinusBtnClick: function (callback) {
+      this.set(MIN_RESIZE, 0, callback);
+    },
+    onFilterFormPlusBtnClick: function (callback) {
+      this.set(MAX_RESIZE, 1, callback);
     }
   };
 })();
+

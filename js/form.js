@@ -2,12 +2,6 @@
 
 window.form = (function () {
 
-  // максимальный размер изображения
-  var MAX_RESIZE = '100%';
-
-  // минимальный размер изображения
-  var MIN_RESIZE = '25%';
-
   // максимальные координаты ползунка
   var PIN_MAX_COORDS = 455;
 
@@ -64,9 +58,11 @@ window.form = (function () {
   // выбраный фильтр
   var defaultFilter = 'none';
 
-  // блок управления изображения формы кадрирования
-  var scaleElement = document.querySelector('.upload-resize-controls');
-
+  // выбранный масштаб
+  var scaleValue = function (sizeValue) {
+    filterFormResizeInput.setAttribute('value', sizeValue + '%');
+    filterImgPreview.style.transform = 'scale(' + sizeValue / 100 + ')';
+  };
   // закрытие формы кадрирования
   function closeFilterForm() {
     uploadOverlay.classList.add('invisible');
@@ -76,8 +72,6 @@ window.form = (function () {
     filterFormUploadBtn.removeEventListener('click', onFilterFormCloseBtnClick);
     filterFormComments.removeEventListener('keydown', onFilterFormCommentsEscPress);
     filterControls.removeEventListener('click', onFilterControlsClick);
-    filterFormMinusBtn.removeEventListener('click', onFilterFormMinusBtnClick);
-    filterFormPlusBtn.removeEventListener('click', onFilterFormPlusBtnClick);
   }
 
   // очистка формы кадрирования
@@ -111,10 +105,14 @@ window.form = (function () {
     filterControls.addEventListener('click', onFilterControlsClick);
 
     // изменение размера в меньшую сторону
-    filterFormMinusBtn.addEventListener('click', onFilterFormMinusBtnClick);
+    filterFormMinusBtn.addEventListener('click', function () {
+      window.scale.onFilterFormMinusBtnClick(scaleValue);
+    });
 
     // изменение размера в меньшую сторону
-    filterFormPlusBtn.addEventListener('click', onFilterFormPlusBtnClick);
+    filterFormPlusBtn.addEventListener('click', function () {
+      window.scale.onFilterFormPlusBtnClick(scaleValue);
+    });
 
     // валидация формы
     filterFormComments.addEventListener('input', onFilterFormCommentsInvalid);
@@ -152,15 +150,6 @@ window.form = (function () {
     showError(evt);
   }
 
-  // обработчик клика на кнопку изменения размера изображения в меньшую сторону
-  function onFilterFormMinusBtnClick() {
-    window.scale(scaleElement, MIN_RESIZE, 0);
-  }
-
-  // обработчик клика на кнопку изменения размера изображения в большую сторону
-  function onFilterFormPlusBtnClick() {
-    window.scale(scaleElement, MAX_RESIZE, 1);
-  }
 
   // обработчик изменения значения в форме загрузки фото
   function onUploadFormChange() {
