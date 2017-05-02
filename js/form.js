@@ -20,12 +20,6 @@ window.form = (function () {
   // поле отображение размера изображения
   var filterFormResizeInput = filterForm.querySelector('input[type="text"]');
 
-  // кнопка  увеличения изображения в форме кадрирования
-  var filterFormPlusBtn = filterForm.querySelector('.upload-resize-controls-button-inc');
-
-  // кнопка  уменьшения изображения в форме кадрирования
-  var filterFormMinusBtn = filterForm.querySelector('.upload-resize-controls-button-dec');
-
   // кнопка закрыть на форме кадрирования
   var filterFormUploadBtn = filterForm.querySelector('.upload-form-cancel');
 
@@ -58,11 +52,6 @@ window.form = (function () {
   // выбраный фильтр
   var defaultFilter = 'none';
 
-  // выбранный масштаб
-  var scaleValue = function (sizeValue) {
-    filterFormResizeInput.setAttribute('value', sizeValue + '%');
-    filterImgPreview.style.transform = 'scale(' + sizeValue / 100 + ')';
-  };
   // закрытие формы кадрирования
   function closeFilterForm() {
     uploadOverlay.classList.add('invisible');
@@ -72,6 +61,8 @@ window.form = (function () {
     filterFormUploadBtn.removeEventListener('click', onFilterFormCloseBtnClick);
     filterFormComments.removeEventListener('keydown', onFilterFormCommentsEscPress);
     filterControls.removeEventListener('click', onFilterControlsClick);
+    window.scale.removeListenerFilterFormMinus();
+    window.scale.removeListenerFilterFormPlus();
   }
 
   // очистка формы кадрирования
@@ -105,14 +96,10 @@ window.form = (function () {
     filterControls.addEventListener('click', onFilterControlsClick);
 
     // изменение размера в меньшую сторону
-    filterFormMinusBtn.addEventListener('click', function () {
-      window.scale.onFilterFormMinusBtnClick(scaleValue);
-    });
+    window.scale.addListenerFilterFormMinus();
 
     // изменение размера в меньшую сторону
-    filterFormPlusBtn.addEventListener('click', function () {
-      window.scale.onFilterFormPlusBtnClick(scaleValue);
-    });
+    window.scale.addListenerFilterFormPlus();
 
     // валидация формы
     filterFormComments.addEventListener('input', onFilterFormCommentsInvalid);
